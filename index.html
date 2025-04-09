@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silly Tavern 角色卡展示</title>
+    <style>
+        /* 引入 Google Fonts (可选, 增加字体选择) */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Poppins:wght@400;600;700&display=swap');
+
+        /* --- 基础重置与全局样式 --- */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 优先中文字体 */
+            line-height: 1.7;
+            color: #e0e0e0; /* 浅色文字，适应深色背景 */
+            background-color: #1a1a2e; /* 深邃的蓝紫色背景 */
+            background-image: linear-gradient(135deg, #1a1a2e 0%, #16213e 74%); /* 添加渐变增加层次 */
+            font-size: 16px;
+            overflow-x: hidden; /* 防止水平溢出 */
+        }
+
+        /* --- 容器与布局 --- */
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 30px 40px;
+            background-color: rgba(44, 44, 68, 0.7); /* 半透明深色背景 */
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px); /* 毛玻璃效果 (需要浏览器支持) */
+            -webkit-backdrop-filter: blur(10px); /* Safari 兼容 */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- 页面标题 --- */
+        .page-title {
+            font-family: 'Poppins', 'Noto Sans SC', sans-serif; /* 标题使用 Poppins */
+            font-size: 2.8em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1.5em;
+            color: #ffffff;
+            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+            background: linear-gradient(45deg, #f3ec78, #af4261); /* 金色到粉色的渐变文字 */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInDown 1s ease-out; /* 标题进入动画 */
+        }
+
+        /* --- 角色卡片网格 --- */
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* 响应式网格 */
+            gap: 35px; /* 卡片间距 */
+        }
+
+        /* --- 单个角色卡片 --- */
+        .character-card {
+            background-color: rgba(60, 60, 90, 0.8); /* 卡片背景色 */
+            border-radius: 10px;
+            overflow: hidden; /* 确保子元素不超出圆角 */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* 平滑过渡 */
+            display: flex;
+            flex-direction: column; /* 垂直布局 */
+            opacity: 0; /* 初始透明 */
+            transform: translateY(20px); /* 初始向下偏移 */
+            animation: fadeInUp 0.6s ease-out forwards; /* 卡片进入动画 */
+            /* 为每个卡片设置不同的动画延迟 */
+        }
+
+        /* 为卡片添加交错加载动画 */
+        .character-card:nth-child(1) { animation-delay: 0.1s; }
+        .character-card:nth-child(2) { animation-delay: 0.2s; }
+        .character-card:nth-child(3) { animation-delay: 0.3s; }
+        .character-card:nth-child(4) { animation-delay: 0.4s; }
+        /* ... 可以根据需要添加更多 */
+
+
+        .character-card:hover {
+            transform: translateY(-8px) scale(1.02); /* 悬停时上移并轻微放大 */
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        /* 卡片图片区域 */
+        .card-image-container {
+            width: 100%;
+            height: 200px; /* 固定图片区域高度 */
+            overflow: hidden; /* 隐藏图片溢出部分 */
+            position: relative; /* 为伪元素定位 */
+        }
+
+        .card-image-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px; /* 底部渐变遮罩高度 */
+            background: linear-gradient(to top, rgba(60, 60, 90, 1) 0%, rgba(60, 60, 90, 0) 100%);
+            pointer-events: none; /* 允许点击穿透 */
+        }
+
+        .character-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 裁剪并填充图片区域 */
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .character-card:hover img {
+            transform: scale(1.1); /* 悬停时图片放大 */
+        }
+
+        /* 卡片内容区域 */
+        .card-content {
+            padding: 20px;
+            flex-grow: 1; /* 占据剩余空间 */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-family: 'Poppins', 'Noto Sans SC', sans-serif;
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.5em;
+            line-height: 1.3;
+            border-left: 4px solid #a775ff; /* 左侧装饰线 (淡紫色) */
+            padding-left: 0.6em;
+        }
+
+        .card-greeting {
+            font-style: italic;
+            color: #c0c0e0;
+            margin-bottom: 1em;
+            padding-left: calc(0.6em + 4px); /* 与标题对齐 */
+            font-size: 0.95em;
+            border-left: 1px dashed rgba(167, 117, 255, 0.5); /* 虚线 */
+            margin-left: 4px; /* 微调位置 */
+        }
+
+        .card-description {
+            color: #b0b0d0;
+            margin-bottom: 1.2em;
+            font-size: 0.9em;
+            flex-grow: 1; /* 使描述占据更多空间，将标签和按钮推到底部 */
+        }
+
+        /* 标签样式 */
+        .card-tags {
+            margin-bottom: 1.2em;
+            padding-left: calc(0.6em + 4px); /* 与标题对齐 */
+        }
+
+        .tag {
+            display: inline-block;
+            background-color: rgba(167, 117, 255, 0.2); /* 淡紫色背景 */
+            color: #d9c8ff; /* 标签文字颜色 */
+            padding: 4px 10px;
+            border-radius: 15px; /* 圆角标签 */
+            font-size: 0.8em;
+            margin-right: 6px;
+            margin-bottom: 6px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            cursor: default; /* 默认光标 */
+        }
+
+        .tag:hover {
+            background-color: rgba(167, 117, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* 下载按钮 */
+        .download-button {
+            display: inline-block;
+            background-color: #a775ff; /* 主题紫色 */
+            color: #ffffff;
+            text-align: center;
+            padding: 10px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            align-self: flex-start; /* 在 flex 容器中靠左 */
+            margin-top: auto; /* 将按钮推到卡片底部 */
+            margin-left: calc(0.6em + 4px); /* 与标题对齐 */
+            box-shadow: 0 2px 5px rgba(167, 117, 255, 0.3);
+        }
+
+        .download-button:hover, .download-button:focus {
+            background-color: #c3a1ff; /* 悬停时变浅 */
+            color: #1a1a2e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(167, 117, 255, 0.5);
+            outline: none; /* 移除焦点时的默认轮廓 */
+        }
+
+        /* --- 页脚 --- */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9em;
+            color: #a0a0c0;
+        }
+
+        footer a {
+            color: #a775ff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            color: #d9c8ff;
+        }
+
+        /* --- 动画 Keyframes --- */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- 响应式设计 --- */
+        @media (max-width: 768px) {
+            .container {
+                margin: 30px auto;
+                padding: 20px 25px;
+            }
+            .page-title {
+                font-size: 2.2em;
+            }
+            .character-grid {
+                grid-template-columns: 1fr; /* 移动端单列 */
+                gap: 25px;
+            }
+            body {
+                font-size: 15px;
+            }
+            .card-image-container {
+                height: 180px; /* 调整图片高度 */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 15px auto;
+                padding: 15px;
+                border-radius: 8px; /* 稍微减小圆角 */
+            }
+            .page-title {
+                font-size: 1.8em;
+            }
+            body {
+                font-size: 14px;
+            }
+            .card-content {
+                padding: 15px;
+            }
+            .card-title {
+                font-size: 1.3em;
+            }
+            .download-button {
+                padding: 8px 14px;
+                font-size: 0.9em;
+            }
+            .tag {
+                padding: 3px 8px;
+                font-size: 0.75em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1 class="page-title">Silly Tavern 角色卡展示</h1>
+        </header>
+
+        <  class="character-grid">
+
+            <!-- 角色卡片 1 (示例) -->
+            <article class="character-card">
+                <div class="card-image-container">
+                    <!-- 替换为你角色卡的图片链接 -->
+                    <img src="https://via.placeholder.com/400x300/a775ff/ffffff?text=角色图片+1" alt="角色 1 的图片">
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">角色名称 A</h2>
+                    <p class="card-greeting">"你好，旅行者。有什么我可以帮你的吗？"</p>
+                    <p class="card-description">
+                        这是一个充满智慧和神秘感的角色。她了解古老的知识，并乐于与求知者分享。性格沉稳，言语中常带有隐喻。
+                    </p>
+                    <div class="card-tags">
+                        <span class="tag">幻想</span>
+                        <span class="tag">神秘</span>
+                        <span class="tag">学者</span>
+                        <span class="tag">女性</span>
+                    </div>
+                    <!-- 替换为你的角色卡下载链接 -->
+                    <a href="#" class="download-button" target="_blank" rel="noopener noreferrer">获取角色卡</a>
+                </div>
+            </article>
+
+            <!-- 角色卡片 2 (示例) -->
+            <article class="character-card">
+                <div class="card-image-container">
+                    <!-- 替换为你角色卡的图片链接 -->
+                    <img src="https://via.placeholder.com/400x300/75a7ff/ffffff?text=角色图片+2" alt="角色 2 的图片">
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">角色名称 B</h2>
+                    <p class="card-greeting">"嘿！准备好迎接冒险了吗？我们出发吧！"</p>
+                    <p class="card-description">
+                        精力充沛的探险家，总是乐观向上。他热爱探索未知的地方，性格直率，有时有点冲动，但非常可靠。
+                    </p>
+                    <div class="card-tags">
+                        <span class="tag">冒险</span>
+                        <span class="tag">乐观</span>
+                        <span class="tag">男性</span>
+                        <span class="tag">动作</span>
+                    </div>
+                    <!-- 替换为你的角色卡下载链接 -->
+                    <a href="#" class="download-button" target="_blank" rel="noopener noreferrer">获取角色卡</a>
+                </div>
+            </article>
+
+            <!-- 角色卡片 3 (示例) -->
+            <article class="character-card">
+                <div class="card-image-container">
+                    <!-- 替换为你角色卡的图片链接 -->
+                    <img src="https://via.placeholder.com/400x300/ff75a7/ffffff?text=角色图片+3" alt="角色 3 的图片">
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">角色名称 C</h2>
+                    <p class="card-greeting">"嗯... 你找我有什么事吗？希望不是麻烦事。"</p>
+                    <p class="card-description">
+                        一个略显内向但内心善良的角色。她可能不善言辞，但观察力敏锐，会在关键时刻提供帮助。喜欢安静的环境。
+                    </p>
+                    <div class="card-tags">
+                        <span class="tag">日常</span>
+                        <span class="tag">内向</span>
+                        <span class="tag">女性</span>
+                        <span class="tag">治愈</span>
+                    </div>
+                    <!-- 替换为你的角色卡下载链接 -->
+                    <a href="#" class="download-button" target="_blank" rel="noopener noreferrer">获取角色卡</a>
+                </div>
+            </article>
+
+            <!-- 添加更多角色卡片... -->
+            <!--
+            <article class="character-card">
+                ... (复制上面的结构并修改内容) ...
+            </article>
+            -->
+
+        </main>
+
+        <footer>
+            <p>&copy; 2023 [你的名字或组织名称]. Silly Tavern 角色卡展示页.</p>
+            <p>由 AI 辅助设计 | <a href="#">返回顶部</a></p>
+        </footer>
+
+    </div> <!-- /container -->
+
+</body>
+</html>
