@@ -1,36 +1,31 @@
 (function() {
     'use strict';
     // --- 配置 ---
-    const BUTTON_ID = 'simplify-ai-button-v2'; // 按钮的唯一 ID (虽然现在不用ID选择器了)
-    const BUTTON_TEXT_IDLE = '简化回复'; // 空闲状态按钮文本
-    const BUTTON_TEXT_PROCESSING = '处理中...'; // 处理中状态按钮文本
-    const BUTTON_TEXT_SUCCESS = '简化成功'; // 成功状态按钮文本
-    const BUTTON_TEXT_ERROR = '简化失败'; // 失败状态按钮文本
-    const BUTTON_TEXT_NO_REPLIES = '无回复'; // 未找到回复时的文本
-    const BUTTON_TEXT_API_ERROR = 'API错误'; // API 或 Token 错误文本
-    const LOCALSTORAGE_TOKEN_KEY = 'console_token'; // 存储 Token 的键名
-    const LOCALSTORAGE_CONVERSATION_MAP_KEY = 'conversationIdInfo'; // 存储会话 ID 映射的键名
-    const AI_REPLY_SELECTOR = 'div#ai-chat-answer'; // AI 回复的主容器选择器
-    const CONTENT_CONTAINER_SELECTOR = '.undefined.markdown-body'; // 包含所有内容的容器选择器 (用于提取/修改)
-    // --- 选择器常量 (适配 <details> HTML 结构) ---
-    const SELECTORS_TO_REMOVE_LATEST = 'details.thinking, details.optionsarea'; // 最新回复移除：思考区, 选项区
-    const SELECTORS_TO_REMOVE_SECOND_LATEST = 'details.optionsarea, details.memoryarea, details.thinking, details.statusbar'; // 次新回复移除：选项区, 记忆区, 思考区, 状态栏
-    const API_BASE_URL = 'https://aifuck.cc/console/api/installed-apps/'; // API 基础 URL
-    // --- 目标按钮容器选择器 ---
+    const BUTTON_ID = 'simplify-ai-button-v2'; // 按钮的唯一 ID
+    const BUTTON_TEXT_IDLE = '简化回复';
+    const BUTTON_TEXT_PROCESSING = '处理中...';
+    const BUTTON_TEXT_SUCCESS = '简化成功';
+    const BUTTON_TEXT_ERROR = '简化失败';
+    const BUTTON_TEXT_NO_REPLIES = '无回复';
+    const BUTTON_TEXT_API_ERROR = 'API错误';
+    const LOCALSTORAGE_TOKEN_KEY = 'console_token';
+    const LOCALSTORAGE_CONVERSATION_MAP_KEY = 'conversationIdInfo';
+    const AI_REPLY_SELECTOR = 'div#ai-chat-answer';
+    const CONTENT_CONTAINER_SELECTOR = '.undefined.markdown-body';
+    const SELECTORS_TO_REMOVE_LATEST = 'details.thinking, details.optionsarea';
+    const SELECTORS_TO_REMOVE_SECOND_LATEST = 'details.optionsarea, details.memoryarea, details.thinking, details.statusbar';
+    const API_BASE_URL = 'https://aifuck.cc/console/api/installed-apps/';
     const TARGET_CONTAINER_SELECTOR = 'div.flex.items-center.gap-2.pb-2';
+
     // --- 状态变量 ---
-    let simplifyButton = null; // 按钮元素的引用
-    let buttonResetTimeout = null; // 用于重置按钮状态的计时器
+    let simplifyButton = null; // 按钮元素的引用 (全局)
+    let buttonResetTimeout = null;
 
     // --- 辅助函数 ---
-    function logDebug(...args) { console.log('[简化脚本 v2.0 DEBUG]', ...args); }
-    function logInfo(...args) { console.log('[简化脚本 v2.0 INFO]', ...args); }
-    function logError(...args) { console.error('[简化脚本 v2.0 ERROR]', ...args); }
+    function logDebug(...args) { console.log('[简化脚本 v2.1 DEBUG]', ...args); }
+    function logInfo(...args) { console.log('[简化脚本 v2.1 INFO]', ...args); }
+    function logError(...args) { console.error('[简化脚本 v2.1 ERROR]', ...args); }
 
-    /**
-     * 添加全局 CSS 样式到文档
-     * @param {string} cssRules - 要添加的 CSS 规则字符串
-     */
     function addGlobalStyle(cssRules) {
         const styleElement = document.createElement('style');
         styleElement.textContent = cssRules;
@@ -38,15 +33,9 @@
         logDebug('全局样式已添加。');
     }
 
-    /**
-     * 更新按钮的外观和状态 (使用 inline style)
-     * @param {'idle' | 'processing' | 'success' | 'error' | 'no_replies' | 'api_error'} state - 按钮状态
-     * @param {string} [detail=''] - 附加的详细文本
-     */
     function updateButtonState(state, detail = '') {
-        simplifyButton = document.querySelector('[data-simplify-button="true"]'); // 确保获取最新的按钮引用
         if (!simplifyButton) {
-            // logDebug('updateButtonState: 简化按钮未找到。');
+            // logDebug('updateButtonState: 简化按钮未找到或未初始化。');
             return;
         }
         if (buttonResetTimeout) {
@@ -55,9 +44,11 @@
         }
         let text = '';
         simplifyButton.disabled = false;
-        simplifyButton.style.backgroundColor = '';
-        simplifyButton.style.cursor = '';
-        simplifyButton.style.opacity = '';
+        // Preserve existing classes, only modify inline styles relevant to state
+        const initialBgColor = simplifyButton.dataset.initialBgColor || '#007bff'; // Default or captured initial
+        simplifyButton.style.backgroundColor = ''; // Reset first, then apply specific or let class handle
+        simplifyButton.style.cursor = 'pointer';
+        simplifyButton.style.opacity = '1';
 
         switch (state) {
             case 'processing':
@@ -86,12 +77,20 @@
             case 'idle':
             default:
                 text = BUTTON_TEXT_IDLE;
+                // If it has classes, rely on them. Otherwise, use initial.
+                if (!simplifyButton.className && initialBgColor) {
+                    simplifyButton.style.backgroundColor = initialBgColor;
+                } else if (simplifyButton.className) {
+                    simplifyButton.style.backgroundColor = ''; // Let class define
+                } else {
+                    simplifyButton.style.backgroundColor = '#007bff'; // Fallback if no class and no initial
+                }
                 break;
         }
         simplifyButton.textContent = text;
     }
 
-    // --- 核心逻辑 ---
+    // --- 核心逻辑 (与之前版本相同，此处省略详细注释) ---
     function getAuthToken() {
         const token = localStorage.getItem(LOCALSTORAGE_TOKEN_KEY);
         if (!token) { logError('未找到 Token:', LOCALSTORAGE_TOKEN_KEY); return null; }
@@ -136,10 +135,9 @@
             })
             .then(response => {
                 clearTimeout(timeoutId);
-                if (response.ok) { // status >= 200 && status < 300
+                if (response.ok) {
                     return response.json();
                 } else {
-                    // Try to get text for better error message
                     return response.text().then(text => {
                         logError('获取消息失败:', response.status, response.statusText, text);
                         throw new Error(`获取失败: ${response.status} - ${text}`);
@@ -153,9 +151,9 @@
                 resolve(aiMessages);
             })
             .catch(error => {
-                clearTimeout(timeoutId); // Ensure timeout is cleared on any error
+                clearTimeout(timeoutId);
                 if (error.name === 'AbortError') {
-                    // Already handled by timeout log, reject already called
+                    // Already handled
                 } else {
                     logError('获取消息网络错误或解析失败:', error);
                     reject(error.message || '网络错误');
@@ -189,7 +187,7 @@
                 clearTimeout(timeoutId);
                 if (response.ok) {
                     logInfo(`通过 API 成功更新消息 ${messageId}。`);
-                    return response.text(); // Or response.json() if expecting JSON
+                    return response.text();
                 } else {
                     return response.text().then(text => {
                         logError(`通过 API 更新消息 ${messageId} 失败:`, response.status, response.statusText, text);
@@ -240,10 +238,7 @@
             if (!mark) {
                 mark = document.createElement('div');
                 mark.className = 'script-simplified-mark';
-                mark.style.fontSize = '10px';
-                mark.style.color = 'grey';
-                mark.style.marginTop = '5px';
-                mark.style.fontStyle = 'italic';
+                // Styles for mark are in addGlobalStyle
                 contentContainer.appendChild(mark);
             }
             mark.textContent = '(已由脚本简化)';
@@ -258,7 +253,7 @@
             logInfo('正在处理中或按钮无效，请稍候...');
             return;
         }
-        logInfo(`按钮点击: ${BUTTON_TEXT_IDLE}`);
+        logInfo(`按钮点击: ${simplifyButton.textContent}`); // Use current text for logging
         updateButtonState('processing');
 
         const authToken = getAuthToken();
@@ -321,7 +316,7 @@
                 } else {
                     if (numPageReplies > 1) {
                         logError(`无法为次新的页面元素 (索引 ${secondLastPageIndex}) 找到匹配的 API 消息。跳过处理次新消息。`);
-                        // failCount++; // Decide if this counts as a hard failure
+                        // failCount++;
                     }
                 }
             }
@@ -333,11 +328,9 @@
             }
             if (repliesToProcess.length === 0 && numPageReplies > 0) {
                 logInfo("没有符合条件的消息进行处理 (例如只有一条消息，或API不匹配但未计入failCount)。");
-                // Potentially updateButtonState('no_replies') or 'idle' if no explicit error
-                 updateButtonState('idle');
+                updateButtonState('idle');
                 return;
             }
-
 
             repliesToProcess.sort((a, b) => a.index - b.index);
             logInfo(`计划处理 ${repliesToProcess.length} 条回复。`);
@@ -366,7 +359,7 @@
                     logError(`  - 更新 ${target.label} 回复失败:`, updateError);
                     failCount++;
                 }
-                await new Promise(resolve => setTimeout(resolve, 100)); // 短暂延迟
+                await new Promise(resolve => setTimeout(resolve, 100));
             }
 
             const totalProcessed = repliesToProcess.length;
@@ -377,10 +370,10 @@
             } else if (successCount > 0) {
                 updateButtonState('success', `${successCount}/${totalProcessed}`);
             } else {
-                 if (totalProcessed === 0 && numPageReplies > 0) { // No items were targeted for processing but replies existed
+                 if (totalProcessed === 0 && numPageReplies > 0) {
                      updateButtonState('no_replies', '无适用目标');
                  } else {
-                     updateButtonState('idle'); // Nothing processed, return to idle
+                     updateButtonState('idle');
                  }
             }
 
@@ -393,58 +386,117 @@
     function setupUI() {
         addGlobalStyle(`
             .script-simplified-mark { font-size: 10px; color: grey; margin-top: 5px; font-style: italic; }
+            #${BUTTON_ID} { /* For initial fixed positioning and basic style */
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 9999;
+                padding: 8px 12px;
+                background-color: #007bff; /* Initial blue, will be updated by updateButtonState */
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            }
+            #${BUTTON_ID}[data-moved="true"] { /* When moved to target container */
+                position: static; /* Override fixed */
+                bottom: auto;
+                right: auto;
+                z-index: auto;
+                box-shadow: none; /* Assume class from container will handle this */
+                 /* background-color: transparent; /* Let class from container handle this */
+                 /* color: inherit; /* Let class from container handle this */
+                 /* padding: inherit; Let class from container handle this */
+            }
         `);
 
-        const insertButtonIntoContainer = (container) => {
-            if (!container) return;
-            if (container.querySelector('[data-simplify-button="true"]')) {
-                simplifyButton = container.querySelector('[data-simplify-button="true"]');
-                logDebug("简化按钮已存在，更新引用。");
-                if (!simplifyButton.dataset.listenerAttached) {
-                    simplifyButton.addEventListener('click', processLastTwoReplies);
-                    simplifyButton.dataset.listenerAttached = 'true';
-                }
-                return;
-            }
-
-            const referenceButton = container.querySelector('button');
-            if (!referenceButton) {
-                logError(`未能在目标容器 (${TARGET_CONTAINER_SELECTOR}) 中找到参考按钮以复制样式。无法添加按钮。`);
-                return;
-            }
-            logInfo("找到参考按钮:", referenceButton, "将复制其 classes:", referenceButton.classList);
-
+        // 1. Create button immediately and add to body
+        if (document.getElementById(BUTTON_ID)) {
+            simplifyButton = document.getElementById(BUTTON_ID);
+            logInfo("简化按钮已存在 (可能由脚本重载)。更新引用。");
+        } else {
             simplifyButton = document.createElement('button');
-            simplifyButton.className = referenceButton.className;
-            simplifyButton.dataset.simplifyButton = 'true';
-            simplifyButton.textContent = BUTTON_TEXT_IDLE;
-            simplifyButton.title = '简化最后 1 或 2 条 AI 回复 (v2.0)';
+            simplifyButton.id = BUTTON_ID;
+            simplifyButton.dataset.simplifyButton = 'true'; // Keep for compatibility if other selectors are used
+            document.body.appendChild(simplifyButton);
+            logInfo(`简化按钮已创建并添加到 body (ID: ${BUTTON_ID}).`);
+        }
+
+        simplifyButton.textContent = BUTTON_TEXT_IDLE;
+        simplifyButton.title = '简化最后 1 或 2 条 AI 回复 (v2.1)';
+
+        // Store initial background for idle state if no class is applied
+        const initialBg = window.getComputedStyle(simplifyButton).backgroundColor;
+        if (initialBg && initialBg !== 'rgba(0, 0, 0, 0)' && initialBg !== 'transparent') {
+            simplifyButton.dataset.initialBgColor = initialBg;
+        }
+
+        // Ensure only one listener
+        if (!simplifyButton.dataset.listenerAttached) {
             simplifyButton.addEventListener('click', processLastTwoReplies);
             simplifyButton.dataset.listenerAttached = 'true';
+            logInfo('按钮点击事件监听器已添加。');
+        }
+        updateButtonState('idle'); // Set initial text and style
+
+
+        // 2. Function to move and style the button when target container is found
+        const moveAndStyleButton = (container) => {
+            if (!container || !simplifyButton) return;
+
+            // Check if already moved to this specific container to avoid reprocessing
+            if (simplifyButton.parentElement === container && simplifyButton.dataset.moved === 'true') {
+                 logDebug("按钮已在目标容器中且已标记，无需操作。");
+                 return;
+            }
+
+            const referenceButton = container.querySelector('button'); // Find a button to copy styles from
+
+            if (referenceButton) {
+                logInfo("找到参考按钮:", referenceButton, "将复制其 classes:", referenceButton.classList.toString());
+                simplifyButton.className = referenceButton.className; // Copy all classes
+                // Apply specific inline styles that might be needed or to override class styles
+                simplifyButton.style.marginLeft = referenceButton.style.marginLeft;
+                simplifyButton.style.marginRight = referenceButton.style.marginRight;
+                // Add any other style properties you want to specifically copy if not covered by classes
+            } else {
+                logError(`未能在目标容器 (${TARGET_CONTAINER_SELECTOR}) 中找到参考按钮。按钮将保留其默认或初始样式。`);
+                // If no reference, we might want to ensure it at least looks decent
+                // simplifyButton.className = ''; // Clear any previous attempts
+            }
+
+            // Mark as moved and adjust styles for non-fixed positioning
+            simplifyButton.dataset.moved = 'true';
+            // Styles for being moved are handled by CSS using [data-moved="true"]
 
             try {
-                container.appendChild(simplifyButton);
-                logInfo(`简化按钮已复制样式并添加到目标容器末尾。`);
+                container.appendChild(simplifyButton); // This moves the button
+                logInfo(`简化按钮已移至目标容器 (${TARGET_CONTAINER_SELECTOR}) 并尝试应用样式。`);
             } catch (e) {
-                logError("尝试 appendChild 到新容器时出错:", e);
+                logError("尝试将按钮移动到目标容器时出错:", e);
+                simplifyButton.dataset.moved = 'false'; // Revert flag if move fails
             }
-            updateButtonState('idle');
+            updateButtonState(simplifyButton.textContent === BUTTON_TEXT_PROCESSING ? 'processing' : 'idle'); // Re-apply current state for correct styling
         };
 
+        // 3. Observe for the target container
         const observer = new MutationObserver((mutationsList, observerInstance) => {
             const targetContainer = document.querySelector(TARGET_CONTAINER_SELECTOR);
             if (targetContainer) {
                 logInfo('MutationObserver 找到目标容器:', targetContainer);
-                insertButtonIntoContainer(targetContainer);
-                observerInstance.disconnect();
-                logDebug('停止 MutationObserver.');
+                moveAndStyleButton(targetContainer);
+                observerInstance.disconnect(); // Stop observing once found and processed
+                logDebug('停止 MutationObserver (目标容器已找到)。');
             }
         });
 
+        // Initial check, in case the container is already there
         const initialTargetContainer = document.querySelector(TARGET_CONTAINER_SELECTOR);
         if (initialTargetContainer) {
-            logInfo('目标容器已存在，直接尝试添加按钮。');
-            insertButtonIntoContainer(initialTargetContainer);
+            logInfo('目标容器已存在，直接尝试移动和样式化按钮。');
+            moveAndStyleButton(initialTargetContainer);
         } else {
             logInfo('未立即找到目标容器，启动 MutationObserver 等待...');
             observer.observe(document.body, { childList: true, subtree: true });
