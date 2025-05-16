@@ -1,0 +1,122 @@
+/* --- Custom Styles for Injection --- */
+
+/* 隐藏原生的输入区域 */
+.original-input-area-selector { /* 这个选择器需要你根据实际情况精确指定原生输入框的父容器 */
+    display: none !important;
+}
+
+/* 自定义状态切换按钮容器 */
+.custom-status-controls-container {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 与原生按钮的间距一致或相似 */
+    /* margin-left: 8px; */ /* 可选，如果想和其他控件稍微隔开 */
+}
+
+/* 自定义状态切换按钮 */
+.custom-status-button {
+    /* 仿真原生按钮样式 (MuiButton-defaultPrimary MuiButton-sizeSmall) */
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 500;
+    font-size: 0.8125rem; /* 13px */
+    line-height: 1.75;
+    letter-spacing: 0.02857em;
+    text-transform: none; /* 原生是 "未破甲" 而非 "未破甲" */
+    min-width: auto; /* 覆盖MUI默认的min-width */
+    padding: 3px 10px; /* 调整以匹配原生按钮的视觉大小 */
+    border-radius: 4px; /* MuiButton默认圆角 */
+    border: 1px solid rgba(25, 118, 210, 0.5); /* 默认主题色边框 */
+    color: #1976d2; /* 默认主题色文字 */
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+                box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+                border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+                color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    margin: 0; /* 清除可能存在的默认边距 */
+}
+
+.custom-status-button:hover {
+    background-color: rgba(25, 118, 210, 0.04); /* 主题色轻微背景 */
+    border: 1px solid #1976d2;
+}
+
+.custom-status-button.active {
+    background-color: #1976d2; /* 主题色实心背景 */
+    color: #fff; /* 白色文字 */
+    border: 1px solid #1976d2;
+}
+
+/* 自定义输入框区域容器 */
+.custom-input-area-container {
+    /* 仿真原生输入框容器样式 p-[5.5px] bg-white border-[1.5px] border-gray-200 rounded-xl */
+    padding: 5.5px;
+    background-color: #fff;
+    border: 1.5px solid #e5e7eb; /* gray-200 */
+    border-radius: 0.75rem; /* rounded-xl */
+    margin-top: 8px; /* 与上方元素的间距 */
+    position: relative; /* 为了发送按钮的绝对定位 */
+}
+
+/* 自定义文本输入框 */
+#custom-ai-chat-input {
+    /* 仿真原生textarea rc-textarea block pr-[70px] w-full px-2 py-[7px] ... */
+    display: block;
+    width: 100%;
+    padding: 7px 70px 7px 8px; /* 右边给发送按钮留空间 */
+    line-height: 1.25; /* leading-5 */
+    max-height: none; /* 允许它根据内容增长，或者设置一个固定的，如150px */
+    min-height: 38px; /* 初始高度，大致与原生相似 */
+    font-size: 0.875rem; /* text-sm */
+    color: #374151; /* gray-700 */
+    outline: none;
+    appearance: none;
+    resize: none; /* 通常不希望用户调整 */
+    border: none; /* 因为父容器有边框 */
+    box-sizing: border-box;
+    font-family: inherit; /* 继承父级或body字体 */
+    background-color: transparent;
+}
+
+/* 自定义发送按钮 */
+#custom-ai-send-button {
+    position: absolute;
+    bottom: 7px; /* 与原生对齐 */
+    right: 8px;  /* 与原生对齐 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; /* w-8 */
+    height: 32px; /* h-8 */
+    border-radius: 0.5rem; /* rounded-lg */
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+
+#custom-ai-send-button:hover {
+    background-color: #EBF5FF; /* 原生 hover:bg-[#EBF5FF] */
+}
+
+#custom-ai-send-button svg {
+    width: 20px;
+    height: 20px;
+    color: #d1d5db; /* text-gray-300 */
+    transition: color 0.15s ease-in-out;
+}
+
+#custom-ai-send-button:hover svg {
+    color: #2563eb; /* group-hover:text-primary-600 (假设primary-600是这个蓝色) */
+}
+
+#custom-ai-send-button.active svg { /* 当输入框有内容时 */
+    color: #2563eb; /* primary-600 */
+}
+
+/* 辅助：用于标记原生输入区域的父元素以便隐藏 */
+/* 你需要用开发者工具找到包含原生 textarea 和发送按钮的那个 div，并给它加上这个类名 */
+/* 例如: <div class="p-[5.5px] ... original-input-area-wrapper"> */
+.original-input-area-wrapper {
+    display: none !important;
+}
