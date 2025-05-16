@@ -58,15 +58,9 @@
         enhancementToggleButton.classList.toggle('active', currentEnhancement);
     });
 
-    // 将按钮添加到原生按钮区域
-    // 尝试插入到原生控件区域的第一个子元素之前，如果已有其他按钮
-    if (nativeControlsOrButtonArea.firstChild) {
-        nativeControlsOrButtonArea.insertBefore(enhancementToggleButton, nativeControlsOrButtonArea.firstChild);
-        nativeControlsOrButtonArea.insertBefore(modeToggleButton, nativeControlsOrButtonArea.firstChild);
-    } else {
-        nativeControlsOrButtonArea.appendChild(modeToggleButton);
-        nativeControlsOrButtonArea.appendChild(enhancementToggleButton);
-    }
+    // 将按钮添加到原生按钮区域的末尾
+    nativeControlsOrButtonArea.appendChild(modeToggleButton);
+    nativeControlsOrButtonArea.appendChild(enhancementToggleButton);
 
 
     // --- 核心逻辑：修改并发送 ---
