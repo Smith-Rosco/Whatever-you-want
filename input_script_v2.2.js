@@ -15,7 +15,7 @@
     // const NATIVE_INPUT_AREA_WRAPPER_SELECTOR = '.p-\\[5\\.5px\\].max-h-\\[150px\\].bg-white'; //不再需要隐藏或替换它
     const NATIVE_CONTROLS_AREA_SELECTOR = '.flex.items-center.gap-2.pb-2'; // 用于按钮区域
 
-    let currentMode = '小说模式'; // 初始模式
+    let currentMode = '角色扮演模式'; // 初始模式
     let currentEnhancement = false; // 初始增强状态
 
     const nativeTextarea = document.querySelector(NATIVE_TEXTAREA_SELECTOR);
