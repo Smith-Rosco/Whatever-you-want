@@ -59,6 +59,7 @@
         if (!modeToggleButton) {
             modeToggleButton = document.createElement('button');
             modeToggleButton.id = CUSTOM_MODE_TOGGLE_ID;
+            modeToggleButton.title = '角色扮演模式下不抢话，小说模式下抢话';
             modeToggleButton.className = 'MuiButtonBase-root MuiButton-root MuiButton-default MuiButton-defaultPrimary MuiButton-sizeSmall MuiButton-defaultSizeSmall MuiButton-colorPrimary css-nkqe49';
             modeToggleButton.style.marginLeft = '8px';
             // 确保按钮区域确实存在再添加
