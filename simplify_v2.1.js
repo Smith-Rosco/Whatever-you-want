@@ -388,26 +388,10 @@
             .script-simplified-mark { font-size: 10px; color: grey; margin-top: 5px; font-style: italic; }
             #${BUTTON_ID} { /* For initial fixed positioning and basic style */
                 position: fixed;
-                bottom: 20px;
-                right: 20px;
-                z-index: 9999;
-                padding: 8px 12px;
-                color: white;
-                border: none;
-                border-radius: 4px;
                 cursor: pointer;
-                font-size: 14px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             }
             #${BUTTON_ID}[data-moved="true"] { /* When moved to target container */
                 position: static; /* Override fixed */
-                bottom: auto;
-                right: auto;
-                z-index: auto;
-                box-shadow: none; /* Assume class from container will handle this */
-                 /* background-color: transparent; /* Let class from container handle this */
-                 /* color: inherit; /* Let class from container handle this */
-                 /* padding: inherit; Let class from container handle this */
             }
         `);
 
