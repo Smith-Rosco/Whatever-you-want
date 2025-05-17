@@ -392,7 +392,6 @@
                 right: 20px;
                 z-index: 9999;
                 padding: 8px 12px;
-                background-color: #007bff; /* Initial blue, will be updated by updateButtonState */
                 color: white;
                 border: none;
                 border-radius: 4px;
