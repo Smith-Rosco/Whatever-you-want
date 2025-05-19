@@ -6,5 +6,5 @@ const loadScript = (src) => {
   document.head.appendChild(s);
 };
 loadScript('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v2/StatefulChatInputWithOptions.js');
-loadScript('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v2/mode_select.js');
+loadScript('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v2/simplify.js');
 
