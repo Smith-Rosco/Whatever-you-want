@@ -89,26 +89,58 @@
         knownNativeTextarea = nativeTextarea;
         knownNativeSendButton = nativeSendButton; // 记录下来，用于 MutationObserver 的比对
 
-        // --- 创建或获取自定义控制按钮 ---
+                // --- 创建或获取自定义控制按钮 ---
         let modeToggleButton = document.getElementById(CUSTOM_MODE_TOGGLE_ID);
         if (!modeToggleButton) {
             modeToggleButton = document.createElement('button');
             modeToggleButton.id = CUSTOM_MODE_TOGGLE_ID;
-            modeToggleButton.className = 'MuiButtonBase-root MuiButton-root MuiButton-default MuiButton-defaultPrimary MuiButton-sizeSmall MuiButton-defaultSizeSmall MuiButton-colorPrimary css-nkqe49'; // 假设样式仍然适用
+            modeToggleButton.className = 'MuiButtonBase-root MuiButton-root MuiButton-default MuiButton-defaultPrimary MuiButton-sizeSmall MuiButton-defaultSizeSmall MuiButton-colorPrimary css-nkqe49'; // 保持您的样式
             modeToggleButton.style.marginLeft = '8px';
-            // 尝试将按钮插入到发送按钮之前或控制区域末尾
-            const sendButtonInControls = nativeControlsOrButtonArea.querySelector(NATIVE_SEND_BUTTON_SELECTOR);
-            if (sendButtonInControls) {
-                 nativeControlsOrButtonArea.insertBefore(modeToggleButton, sendButtonInControls);
-            } else if (nativeControlsOrButtonArea.firstChild) {
-                nativeControlsOrButtonArea.insertBefore(modeToggleButton, nativeControlsOrButtonArea.firstChild);
-            }
-             else {
-                nativeControlsOrButtonArea.appendChild(modeToggleButton);
-            }
-            console.log('【自定义脚本】模式切换按钮已创建并添加。');
+            // console.log('【自定义脚本】模式切换按钮已创建。');
         }
-        updateModeButtonDisplay();
+        // 如果按钮已存在于DOM中并被重新获取，后续的insertBefore/appendChild会将其移动到新位置
+
+        let enhancementToggleButton = document.getElementById(CUSTOM_ENHANCEMENT_TOGGLE_ID);
+        if (!enhancementToggleButton) {
+            enhancementToggleButton = document.createElement('button');
+            enhancementToggleButton.id = CUSTOM_ENHANCEMENT_TOGGLE_ID;
+            enhancementToggleButton.className = 'MuiButtonBase-root MuiButton-root MuiButton-default MuiButton-defaultPrimary MuiButton-sizeSmall MuiButton-defaultSizeSmall MuiButton-colorPrimary css-nkqe49'; // 保持您的样式
+            enhancementToggleButton.style.marginLeft = '8px';
+            // console.log('【自定义脚本】增强切换按钮已创建。');
+        }
+
+        // 定位原生发送按钮，假设它在 nativeControlsOrButtonArea 内部
+        // NATIVE_CONTROLS_AREA_SELECTOR 是我们期望这些按钮所在的父容器
+        // NATIVE_SEND_BUTTON_SELECTOR 是 "原有的按钮"
+        const sendButtonElement = nativeControlsOrButtonArea.querySelector(NATIVE_SEND_BUTTON_SELECTOR);
+
+        if (sendButtonElement) {
+            // 目标：在 sendButtonElement 之后插入 modeToggleButton，
+            // 然后在 modeToggleButton 之后插入 enhancementToggleButton.
+
+            // 插入 modeToggleButton 到 sendButtonElement 之后
+            // element.insertBefore(newNode, referenceNode.nextSibling)
+            // 如果 referenceNode 是最后一个子节点, referenceNode.nextSibling 为 null,
+            // 此时 insertBefore(newNode, null) 的行为等同于 appendChild(newNode).
+            nativeControlsOrButtonArea.insertBefore(modeToggleButton, sendButtonElement.nextSibling);
+
+            // 插入 enhancementToggleButton 到 modeToggleButton 之后
+            nativeControlsOrButtonArea.insertBefore(enhancementToggleButton, modeToggleButton.nextSibling);
+            
+            console.log('【自定义脚本】自定义按钮已添加到原生发送按钮之后。');
+        } else {
+            // 后备方案：如果在 nativeControlsOrButtonArea 内未找到 NATIVE_SEND_BUTTON_SELECTOR 指定的按钮，
+            // 则将自定义按钮追加到 nativeControlsOrButtonArea 的末尾。
+            // 您也可以选择将它们添加到开头，例如：
+            // nativeControlsOrButtonArea.insertBefore(enhancementToggleButton, nativeControlsOrButtonArea.firstChild);
+            // nativeControlsOrButtonArea.insertBefore(modeToggleButton, nativeControlsOrButtonArea.firstChild); // 注意顺序
+            nativeControlsOrButtonArea.appendChild(modeToggleButton);
+            nativeControlsOrButtonArea.appendChild(enhancementToggleButton);
+            console.warn('【自定义脚本】未在控制区域找到原生发送按钮 (' + NATIVE_SEND_BUTTON_SELECTOR + ')，自定义按钮已追加到控制区域 (' + NATIVE_CONTROLS_AREA_SELECTOR + ') 的末尾。');
+        }
+
+        // 更新按钮显示文本和绑定 onclick 事件的逻辑保持不变
+        updateModeButtonDisplay(); // 更新模式按钮文本
         modeToggleButton.onclick = null; // 确保移除旧的处理器
         modeToggleButton.onclick = () => {
             currentMode = (currentMode === '小说模式') ? '角色扮演模式' : '小说模式';
@@ -116,20 +148,7 @@
             console.log('【自定义脚本】模式手动切换为:', currentMode);
         };
 
-        let enhancementToggleButton = document.getElementById(CUSTOM_ENHANCEMENT_TOGGLE_ID);
-        if (!enhancementToggleButton) {
-            enhancementToggleButton = document.createElement('button');
-            enhancementToggleButton.id = CUSTOM_ENHANCEMENT_TOGGLE_ID;
-            enhancementToggleButton.className = 'MuiButtonBase-root MuiButton-root MuiButton-default MuiButton-defaultPrimary MuiButton-sizeSmall MuiButton-defaultSizeSmall MuiButton-colorPrimary css-nkqe49'; // 假设样式仍然适用
-            enhancementToggleButton.style.marginLeft = '8px';
-            if (modeToggleButton.nextSibling) {
-                nativeControlsOrButtonArea.insertBefore(enhancementToggleButton, modeToggleButton.nextSibling);
-            } else {
-                nativeControlsOrButtonArea.appendChild(enhancementToggleButton);
-            }
-            console.log('【自定义脚本】增强切换按钮已创建并添加。');
-        }
-        enhancementToggleButton.textContent = `瑟瑟增强${currentEnhancement ? '开' : '关'}`;
+        enhancementToggleButton.textContent = `瑟瑟增强${currentEnhancement ? '开' : '关'}`; // 更新增强按钮文本
         enhancementToggleButton.onclick = null; // 确保移除旧的处理器
         enhancementToggleButton.onclick = () => {
             currentEnhancement = !currentEnhancement;
