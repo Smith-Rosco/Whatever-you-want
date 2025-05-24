@@ -15,4 +15,4 @@ const loadStylesheet = (href) => {
 
 
 loadStylesheet('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3/style.css');
-// loadScript('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/StatefulChatInputWithOptions_v1.2.js');
+loadScript('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3/script.js');
