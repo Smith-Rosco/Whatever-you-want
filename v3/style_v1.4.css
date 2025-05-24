@@ -23,42 +23,6 @@
     --light-blue: #3a98db;
 }
 
-body {
-    font-family: var(--font-primary);
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    line-height: 1.6;
-    margin: 0;
-    padding: 1rem;
-    /* Add some padding to see the chat */
-}
-
-/* --- CHAT STYLES --- */
-#ai-chat-answer {
-    /* Using existing flex and mb-2 */
-    max-width: 800px;
-    /* Max width for chat messages */
-    margin-left: auto;
-    /* Example alignment, adjust if needed */
-    margin-right: auto;
-}
-
-.chat-answer-container {
-    /* Using existing grow w-0 etc. */
-}
-
-.chat-answer-container>.group>.undefined {
-    /* The main bubble content wrapper */
-    /* margin-left: 1rem; /* Original ml-4 */
-    /* This is already styled by Tailwind classes: bg-gray-100/90, rounded-b-2xl, rounded-tl-2xl, border-t-2, border-[#F1CBCB] */
-    /* Let's ensure the background is solid for better visuals if opacity is an issue */
-    background-color: var(--ai-bubble-bg);
-    box-shadow: var(--shadow-md);
-    border-top: 2px solid var(--ai-bubble-border-top-color);
-
-    /* Ensured by Tailwind classes */
-}
-
 .markdown-body main,
 .markdown-body main sts {
     display: flex;
@@ -191,20 +155,12 @@ body {
     color: #333;
 }
 
-.markdown-body main>* {
-    padding-bottom: 1rem;
-}
-
-.markdown-body main>*:not(sts) {
+.markdown-body main>*:not(sts), .markdown-body sts sti {
     /* Spacing between sections thk, txt, etc, but exclude sts */
-    background-color: rgba(0, 123, 255, 0.05);
+    /* background-color: rgba(0, 123, 255, 0.05); */
     border-radius: var(--radius-md);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     /* Add horizontal padding to section content */
-}
-
-.markdown-body sts sti {
-    background-color: rgba(0, 123, 255, 0.05);
-    border-radius: var(--radius-md);
 }
 
 .markdown-body main>*:last-child {
@@ -263,6 +219,10 @@ body {
     padding-bottom: 0.25rem;
     padding-left: 0.75rem;
     padding-right: 0.75rem;
+}
+
+.markdown-body h1 + div {
+    padding-bottom: 1rem;
 }
 
 .markdown-body h1.is-collapsed+div,
@@ -374,12 +334,12 @@ body {
   padding-left: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.5rem;
   margin: 0;
 }
 
 .markdown-body opt li {
-  background-color: #e0e5ff;
+  background-color: #f8f9fa;
   padding: 0.6rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -419,40 +379,4 @@ body {
 .markdown-body opt li span {
   position: relative;
   z-index: 1;
-}
-
-
-
-/* --- MUI BUTTON STYLING (basic override) --- */
-.MuiButtonBase-root.MuiButton-root {
-    padding: 0.3rem 0.8rem;
-    font-size: 0.8rem;
-    font-family: var(--font-primary);
-    border-radius: var(--radius-md);
-    text-transform: none;
-    /* MUI buttons are often uppercase by default */
-    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-    font-weight: 500;
-}
-
-.MuiButton-textInfo {
-    color: var(--accent-color);
-}
-
-.MuiButton-textInfo:hover {
-    background-color: rgba(0, 123, 255, 0.08);
-    color: var(--accent-color-dark);
-}
-
-.MuiButton-textInfo:active {
-    background-color: rgba(0, 123, 255, 0.12);
-}
-
-/* Info line with costs */
-.flex.items-center.gap-2.text-purple-500.my-3.text-xs {
-    padding-left: 0.75rem;
-    /* Align with section content */
-    border-top: 1px dashed var(--border-color);
-    padding-top: 0.5rem;
-    margin-top: 1rem;
 }
