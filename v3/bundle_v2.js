@@ -15,4 +15,6 @@ const loadStylesheet = (href) => {
 
 
 loadStylesheet('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3/style_v1.5.css');
-loadScript('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3/script.js');
+loadScript('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3/style.js');
+loadScript('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3/input.js');
+loadScript('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3/simplify.js');
