@@ -13,6 +13,7 @@
     --accent-color: #007bff;
     /* A nice blue */
     --accent-color-dark: #0056b3;
+    --accrnt-color-light: #4d5964;
     --border-color: #dee2e6;
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -30,10 +31,15 @@
     gap: 1rem;
 }
 
+.markdown-body main thk {
+    display: none;
+}
+
 .markdown-body ul,
 .markdown-body ol {
     padding-left: 1.5rem;
     margin-bottom: 0.75rem;
+    border-radius: 0.5rem;
 }
 
 .markdown-body ul li,
@@ -160,12 +166,15 @@
     color: #333;
 }
 
-.markdown-body main>*:not(sts), .markdown-body sts sti {
-    /* Spacing between sections thk, txt, etc, but exclude sts */
-    /* background-color: rgba(0, 123, 255, 0.05); */
-    border-radius: var(--radius-md);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    /* Add horizontal padding to section content */
+.markdown-body txt,
+.markdown-body opt,
+.markdown-body sts sti {
+    /* 让 main 下的所有子元素（除了 sts）以及 sts 下的 sti 元素有统一的样式 */
+    /* background-color: rgba(0, 123, 255, 0.05); */ /* 可选的浅蓝背景，已注释 */
+    border-radius: var(--radius-md); /* 圆角边框 */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); /* 添加阴影效果，使内容有浮起感 */
+    /* 为区块内容添加水平内边距 */
+    border: solid 2px var(--accent-color-light);
 }
 
 .markdown-body main>*:last-child {
