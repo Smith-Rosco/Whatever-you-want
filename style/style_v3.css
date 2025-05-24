@@ -1,0 +1,403 @@
+/* --- GLOBAL STYLES --- */
+:root {
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --bg-color: #f8f9fa;
+    /* Light gray background */
+    --text-color: #212529;
+    /* Dark text */
+    --ai-bubble-bg: #ffffff;
+    --ai-bubble-border-top-color: #F1CBCB;
+    /* From original HTML */
+    --user-bubble-bg: #e0f0ff;
+    /* Example for user bubble if needed */
+    --accent-color: #007bff;
+    /* A nice blue */
+    --accent-color-dark: #0056b3;
+    --border-color: #dee2e6;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+    --transition-speed: 0.3s;
+    --transition-timing: ease-in-out;
+    --light-blue: #3a98db;
+}
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    margin: 0;
+    padding: 1rem;
+    /* Add some padding to see the chat */
+}
+
+/* --- CHAT STYLES --- */
+#ai-chat-answer {
+    /* Using existing flex and mb-2 */
+    max-width: 800px;
+    /* Max width for chat messages */
+    margin-left: auto;
+    /* Example alignment, adjust if needed */
+    margin-right: auto;
+}
+
+.chat-answer-container {
+    /* Using existing grow w-0 etc. */
+}
+
+.chat-answer-container>.group>.undefined {
+    /* The main bubble content wrapper */
+    /* margin-left: 1rem; /* Original ml-4 */
+    /* This is already styled by Tailwind classes: bg-gray-100/90, rounded-b-2xl, rounded-tl-2xl, border-t-2, border-[#F1CBCB] */
+    /* Let's ensure the background is solid for better visuals if opacity is an issue */
+    background-color: var(--ai-bubble-bg);
+    box-shadow: var(--shadow-md);
+    border-top: 2px solid var(--ai-bubble-border-top-color);
+
+    /* Ensured by Tailwind classes */
+}
+
+.markdown-body main,
+.markdown-body main>sts {
+    display: flex;
+    flex-direction: column;
+    gap: 0rem;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+    margin-left: 1.25rem;
+    padding-left: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.markdown-body ul li,
+.markdown-body ol li {
+    margin-bottom: 0.3rem;
+}
+
+.markdown-body ul, .markdown-body ol {
+    list-style: none;
+}
+
+.markdown-body opt ol {
+    list-style: decimal;
+}
+
+.markdown-body main>mem ol,
+.markdown-body main>mem ul {
+    list-style: none;
+    /* 移除默认列表标记 */
+    padding-left: 25px;
+    /* 左内边距 */
+    margin-left: 0;
+    /* 无左外边距 */
+    position: relative;
+    /* 相对定位，用于 ::before */
+    margin-bottom: 18px;
+    /* 下外边距 */
+}
+
+/* 记忆区域列表左侧竖线 */
+.markdown-body mem ol::before,
+.markdown-body mem ul::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    /* 定位调整 */
+    top: 10px;
+    /* 竖线顶部位置 */
+    bottom: 10px;
+    /* 竖线底部位置 */
+    width: 2px;
+    /* 竖线宽度 */
+    background-color: var(--accent-color);
+    /* 主题蓝色竖线 */
+    border-radius: 1px;
+    /* 圆角 */
+    opacity: 0.6;
+    /* 降低透明度 */
+}
+
+.markdown-body mem li::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    /* 圆点位置 */
+    top: 50%;
+    /* 垂直居中 */
+    transform: translateY(-50%);
+    /* 垂直居中 */
+    width: 8px;
+    /* 圆点大小 */
+    height: 8px;
+    /* 圆点大小 */
+    background-color: var(--accent-color);
+    /* 主题蓝色圆点 */
+    border-radius: 50%;
+    /* 圆形 */
+}
+
+.markdown-body mem li {
+    color: #6c757d;
+    /* 中灰色文本 */
+    font-size: 14px;
+    /* 字体大小 */
+    line-height: 1.6;
+    /* 行高 */
+    margin-bottom: 10px;
+    /* 下外边距 */
+    padding: 2px 0px 2px 15px;
+    /* 内边距调整 */
+    border-radius: 4px;
+    /* 圆角 */
+    transition: color 0.3s ease, background-color 0.3s ease;
+    /* 过渡 */
+    position: relative;
+    /* 相对定位，用于 ::before */
+}
+
+.MuiBox-root.css-kn9hwj {
+    /* The triangle pointer */
+    /* Tailwind classes: bg-gray-100/90 w-2 h-3 clip-path-triangle-right absolute -right-2 top-0 border-t-2 border-[#F1CBCB] */
+    /* The border on the triangle itself is a bit unusual, usually the bubble has the border and triangle matches bubble bg */
+    /* But we'll stick to the HTML structure. */
+    background-color: var(--ai-bubble-bg);
+    /* Match bubble background, original was gray-100/90 */
+    border-top: 2px solid var(--ai-bubble-border-top-color);
+    /* From original HTML */
+    /* Clip-path is defined by Tailwind */
+}
+
+.shrink-0.relative.w-10.h-10 img {
+    border: 2px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease;
+}
+
+.shrink-0.relative.w-10.h-10:hover img {
+    transform: scale(1.1);
+}
+
+
+/* --- MARKDOWN BODY STYLING --- */
+.markdown-body {
+    padding: 0.5rem 0;
+    /* Add some internal padding if needed, original uses px-4 py-3 on parent */
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.markdown-body main>* {
+    /* Spacing between sections thk, txt, sts etc */
+    padding: 0 0.75rem;
+    /* Add horizontal padding to section content */
+}
+
+.markdown-body main>*:last-child {
+    margin-bottom: 0;
+}
+
+.markdown-body h1 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent-color);
+    margin-bottom: 0.6rem;
+    padding: 1rem 0.6rem;
+    border-radius: var(--radius-md);
+    background-color: rgba(0, 123, 255, 0.05);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    /* Prevent text selection on click */
+}
+
+.markdown-body h1:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.markdown-body h1::after {
+    content: '▼';
+    /* Collapsed state arrow */
+    font-size: 0.8em;
+    transition: transform 0.3s ease-out;
+    margin-left: 0.5rem;
+}
+
+.markdown-body h1.is-collapsed::after {
+    transform: rotate(-90deg);
+}
+
+.markdown-body h1+div,
+.markdown-body h1+ul,
+/* For sti sections */
+.markdown-body h1+ol {
+    max-height: 1000px;
+    /* Arbitrary large number for expanded state */
+    overflow: hidden;
+    transition: max-height var(--transition-speed) var(--transition-timing),
+        opacity var(--transition-speed) var(--transition-timing) calc(var(--transition-speed) / 2),
+        transform var(--transition-speed) var(--transition-timing) calc(var(--transition-speed) / 2),
+        padding var(--transition-speed) var(--transition-timing);
+    opacity: 1;
+    transform: translateY(0);
+    margin-top: 0.5rem;
+    /* Spacing below H1 */
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    padding-left: 0.75rem;
+}
+
+.markdown-body h1.is-collapsed+div,
+.markdown-body h1.is-collapsed+ul,
+.markdown-body h1.is-collapsed+ol {
+    transform: translateY(-10px);
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.markdown-body h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--light-blue);
+    margin-top: 0.8rem;
+    margin-bottom: 0.4rem;
+}
+
+.markdown-body .sti h2 {
+    /* Status item h2 */
+    margin-top: 0;
+    /* no extra top margin if it's the first element in sti > div */
+}
+
+
+.markdown-body p {
+    margin-bottom: 0.75rem;
+    line-height: 1.7;
+}
+
+.markdown-body p:last-child {
+    margin-bottom: 0;
+}
+
+.markdown-body strong {
+    font-weight: 600;
+}
+
+/* Special inline tags */
+/* Custom tags: <fem>, <psy>, <fxs> */
+.markdown-body fem,
+.markdown-body psy,
+.markdown-body fxs,
+.markdown-body man{
+    display: inline-block;
+    /* Or block if they should be on their own line */
+    padding: 0.2em 0.5em;
+    border-radius: 4px;
+    margin: 0.1em 0;
+    font-style: italic;
+}
+
+.markdown-body fem {
+    background-color: #fdeaf1;
+    /* Light pink */
+    color: #c72566;
+    border-left: 3px solid #e91e63;
+}
+
+.markdown-body fem::before {
+    content: "💭 ";
+}
+
+.markdown-body man {
+    background-color: #e6f3ff;
+    /* Light pink */
+    color: #1976d2;
+    border-left: 3px solid #0b67c4;
+}
+
+.markdown-body man::before {
+    content: "💭 ";
+}
+
+.markdown-body psy {
+    background-color: #f7e5ff;
+    /* Light blue */
+    color: #a932d8;
+    border-left: 3px solid #7807c4;
+}
+
+.markdown-body psy::before {
+    content: "🧠 ";
+}
+
+.markdown-body fxs {
+    background-color: #fff8e1;
+    /* Light yellow/cream */
+    color: #ef6c00;
+    border-left: 3px solid #ffa000;
+}
+
+.markdown-body fxs::before {
+    content: "✨ ";
+}
+
+/* Options list specific styling */
+.markdown-body #opt ol li {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-bottom: 0.5rem;
+    background-color: #fff;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.markdown-body #opt ol li:hover {
+    background-color: #f8f9fa;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    /* If these are meant to be clickable */
+}
+
+
+/* --- MUI BUTTON STYLING (basic override) --- */
+.MuiButtonBase-root.MuiButton-root {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+    font-family: var(--font-primary);
+    border-radius: var(--radius-md);
+    text-transform: none;
+    /* MUI buttons are often uppercase by default */
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    font-weight: 500;
+}
+
+.MuiButton-textInfo {
+    color: var(--accent-color);
+}
+
+.MuiButton-textInfo:hover {
+    background-color: rgba(0, 123, 255, 0.08);
+    color: var(--accent-color-dark);
+}
+
+.MuiButton-textInfo:active {
+    background-color: rgba(0, 123, 255, 0.12);
+}
+
+/* Info line with costs */
+.flex.items-center.gap-2.text-purple-500.my-3.text-xs {
+    padding-left: 0.75rem;
+    /* Align with section content */
+    border-top: 1px dashed var(--border-color);
+    padding-top: 0.5rem;
+    margin-top: 1rem;
+}
