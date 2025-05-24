@@ -60,10 +60,10 @@ body {
 }
 
 .markdown-body main,
-.markdown-body main>sts {
+.markdown-body main sts {
     display: flex;
     flex-direction: column;
-    gap: 0rem;
+    gap: 1rem;
 }
 
 .markdown-body ul,
@@ -78,7 +78,8 @@ body {
     margin-bottom: 0.3rem;
 }
 
-.markdown-body ul, .markdown-body ol {
+.markdown-body ul,
+.markdown-body ol {
     list-style: none;
 }
 
@@ -86,9 +87,9 @@ body {
     list-style: decimal;
 }
 
-.markdown-body main>mem ol,
-.markdown-body main>mem ul {
-    list-style: none;
+.markdown-body mem ol,
+.markdown-body mem ul {
+    list-style: none !important;
     /* 移除默认列表标记 */
     padding-left: 25px;
     /* 左内边距 */
@@ -190,10 +191,16 @@ body {
     color: #333;
 }
 
-.markdown-body main>* {
-    /* Spacing between sections thk, txt, sts etc */
-    padding: 0 0.75rem;
+.markdown-body main>*:not(sts) {
+    /* Spacing between sections thk, txt, etc, but exclude sts */
+    background-color: rgba(0, 123, 255, 0.05);
+    border-radius: var(--radius-md);
     /* Add horizontal padding to section content */
+}
+
+.markdown-body sts sti {
+    background-color: rgba(0, 123, 255, 0.05);
+    border-radius: var(--radius-md);
 }
 
 .markdown-body main>*:last-child {
@@ -201,13 +208,13 @@ body {
 }
 
 .markdown-body h1 {
+    margin: 0 !important;
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--accent-color);
     margin-bottom: 0.6rem;
     padding: 1rem 0.6rem;
     border-radius: var(--radius-md);
-    background-color: rgba(0, 123, 255, 0.05);
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease;
     display: flex;
@@ -251,6 +258,7 @@ body {
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
     padding-left: 0.75rem;
+    padding-right: 0.75rem;
 }
 
 .markdown-body h1.is-collapsed+div,
@@ -297,7 +305,7 @@ body {
 .markdown-body fem,
 .markdown-body psy,
 .markdown-body fxs,
-.markdown-body man{
+.markdown-body man {
     display: inline-block;
     /* Or block if they should be on their own line */
     padding: 0.2em 0.5em;
@@ -351,21 +359,64 @@ body {
 }
 
 /* Options list specific styling */
-.markdown-body #opt ol li {
-    padding: 0.4rem 0.6rem;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    margin-bottom: 0.5rem;
-    background-color: #fff;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+.markdown-body opt div {
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
 }
 
-.markdown-body #opt ol li:hover {
-    background-color: #f8f9fa;
-    box-shadow: var(--shadow-sm);
-    cursor: pointer;
-    /* If these are meant to be clickable */
+.markdown-body opt ol {
+  list-style: decimal;
+  list-style-position: inside;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0;
 }
+
+.markdown-body opt li {
+  background-color: #e0e5ff;
+  padding: 0.6rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.markdown-body opt :first-child {
+  margin-top: 1rem;
+}
+
+.markdown-body opt li::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 128, 255, 0.05);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.markdown-body opt li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.markdown-body opt li:hover::before {
+  opacity: 1;
+}
+
+.markdown-body opt li:active {
+  transform: scale(0.98);
+}
+
+.markdown-body opt li span {
+  position: relative;
+  z-index: 1;
+}
+
 
 
 /* --- MUI BUTTON STYLING (basic override) --- */
