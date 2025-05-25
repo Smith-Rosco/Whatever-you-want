@@ -537,101 +537,163 @@
     }
 
     function setupUI() {
-        addGlobalStyle(`
-            .script-simplified-mark { 
-                font-size: 10px; color: grey; margin-top: 5px; 
-                margin-bottom: 5px; font-style: italic; display: block;
-            }
-            #${BUTTON_ID} {
-                position: fixed; cursor: pointer;
-            }
-            #${BUTTON_ID}[data-moved="true"] { 
-                position: static; right: auto; bottom: auto; z-index: auto;
-            }
-        `);
+    addGlobalStyle(`
+        .script-simplified-mark { 
+            font-size: 10px; color: grey; margin-top: 5px; 
+            margin-bottom: 5px; font-style: italic; display: block;
+        }
+        #${BUTTON_ID} {
+            /* 初始可以设置为 fixed，如果希望在移动前它可见且位于固定位置 */
+            position: fixed; 
+            bottom: 20px; /* 示例：移动前的默认位置 */
+            right: 20px;  /* 示例：移动前的默认位置 */
+            z-index: 1000;/* 示例：确保在顶层 */
+            padding: 8px 12px; /* 示例：默认样式 */
+            border: none; /* 示例：默认样式 */
+            border-radius: 4px; /* 示例：默认样式 */
+            cursor: pointer;
+        }
+        #${BUTTON_ID}[data-moved="true"] { 
+            /* 当按钮被移动到目标容器后，这些样式会使其融入容器 */
+            position: static; 
+            right: auto; bottom: auto; z-index: auto;
+            /* 清除或调整可能与容器内其他按钮冲突的固定样式 */
+            padding: unset; 
+            margin: unset; 
+            /* 背景色等将由 updateButtonState 或复制的类名控制 */
+        }
+    `);
 
-        if (document.getElementById(BUTTON_ID)) {
-            simplifyButton = document.getElementById(BUTTON_ID);
-            logInfo("简化按钮已存在。更新引用。");
+    if (document.getElementById(BUTTON_ID)) {
+        simplifyButton = document.getElementById(BUTTON_ID);
+        logInfo("简化按钮已存在。更新引用。");
+    } else {
+        simplifyButton = document.createElement('button');
+        simplifyButton.id = BUTTON_ID;
+        // 初始将按钮添加到 body。如果 DOMWatcherService 失败，它会留在这里。
+        // 如果 DOMWatcherService 成功，它将被移动。
+        document.body.appendChild(simplifyButton);
+        logInfo(`简化按钮已创建并添加到 body (ID: ${BUTTON_ID}).`);
+    }
+
+    simplifyButton.textContent = BUTTON_TEXT_IDLE;
+    simplifyButton.title = `简化 AI 回复 (${SCRIPT_VERSION})`;
+    simplifyButton.dataset.moved = 'false'; // 初始状态为未移动
+
+    const computedStyle = window.getComputedStyle(simplifyButton);
+    const initialBg = computedStyle.backgroundColor;
+    if (initialBg && initialBg !== 'rgba(0, 0, 0, 0)' && initialBg !== 'transparent') {
+        simplifyButton.dataset.initialBgColor = initialBg;
+    } else {
+        // 如果初始背景透明 (例如，仅由类控制)，则使用默认值
+        // 或者，如果上面的CSS中已为 #${BUTTON_ID} 设置了背景色，可以依赖它
+        simplifyButton.dataset.initialBgColor = '#007bff'; // 脚本的默认蓝色
+    }
+    
+    if (!simplifyButton.style.backgroundColor && simplifyButton.dataset.initialBgColor && simplifyButton.dataset.moved === 'false') {
+        simplifyButton.style.backgroundColor = simplifyButton.dataset.initialBgColor; // 应用初始背景色
+    }
+
+
+    if (!simplifyButton.dataset.listenerAttached) {
+        simplifyButton.addEventListener('click', processLastTwoReplies);
+        simplifyButton.dataset.listenerAttached = 'true';
+        logInfo('按钮点击事件监听器已添加。');
+    }
+    updateButtonState('idle'); // 初始化按钮状态和文本 (会应用背景色)
+
+    // --- 定义按钮移动和样式化的函数 (之前是 setupUI 内的局部函数) ---
+    const moveAndStyleButtonInternal = (container) => {
+        if (!container || !simplifyButton) {
+            logError("moveAndStyleButtonInternal: 容器或按钮无效。");
+            return;
+        }
+
+        // 即使 DOMWatcherService 的 once:true 保证回调一次，这个检查也无害，
+        // 并能处理其他可能的调用（尽管当前场景下不太可能）。
+        if (simplifyButton.dataset.moved === 'true' && simplifyButton.parentElement === container) {
+            logDebug("按钮已在目标容器中且已标记为移动，无需重复操作。");
+            return;
+        }
+
+        logInfo(`目标容器 (${TARGET_CONTAINER_SELECTOR}) 已找到，尝试移动和样式化按钮。容器:`, container);
+
+        const referenceButton = container.querySelector('button:not(#' + BUTTON_ID + ')');
+        if (referenceButton) {
+            logInfo("找到参考按钮，将复制其 classes:", referenceButton.classList.toString());
+            simplifyButton.className = referenceButton.className;
+            // 清除可能由 #BUTTON_ID 初始样式或 JavaScript 直接设置的样式，以便类名优先
+            simplifyButton.style.backgroundColor = '';
+            simplifyButton.style.position = '';
+            simplifyButton.style.bottom = '';
+            simplifyButton.style.right = '';
+            simplifyButton.style.zIndex = '';
+            simplifyButton.style.padding = ''; // 等等，根据需要清除
         } else {
-            simplifyButton = document.createElement('button');
-            simplifyButton.id = BUTTON_ID;
-            document.body.appendChild(simplifyButton);
-            logInfo(`简化按钮已创建并添加到 body (ID: ${BUTTON_ID}).`);
+            logError(`未能在目标容器 (${TARGET_CONTAINER_SELECTOR}) 中找到参考按钮。按钮将依赖 #${BUTTON_ID}[data-moved="true"] 的样式。`);
+            // 如果没有参考按钮，按钮将依赖全局样式表中为 #${BUTTON_ID}[data-moved="true"] 定义的规则
+        }
+        
+        simplifyButton.dataset.moved = 'true'; // 标记为已移动
+
+        try {
+            // 从当前父节点（可能是 body）移除按钮
+            if (simplifyButton.parentElement) {
+                simplifyButton.parentElement.removeChild(simplifyButton);
+            }
+            container.appendChild(simplifyButton); // 将按钮添加到目标容器
+            logInfo(`简化按钮已成功移至目标容器。`);
+        } catch (e) {
+            logError("尝试将按钮移动到目标容器时出错:", e);
+            simplifyButton.dataset.moved = 'false'; // 移动失败，重置标记
+            // 尝试将其重新附加回body作为备用
+            if (!document.body.contains(simplifyButton)) {
+                 document.body.appendChild(simplifyButton);
+            }
+            // 此时按钮会使用 #${BUTTON_ID} 的初始 fixed 样式（如果定义了）
         }
 
-        simplifyButton.textContent = BUTTON_TEXT_IDLE;
-        simplifyButton.title = `简化 AI 回复 (${SCRIPT_VERSION})`;
-        simplifyButton.dataset.moved = 'false';
+        // 按钮移动后，其视觉状态（如背景色）可能需要根据当前状态重新应用，
+        // 因为类名更改或直接样式清除可能会影响它。
+        // updateButtonState 会处理这个问题。
+        let currentStateGuess = 'idle'; // 默认
+        if (simplifyButton.textContent.includes(BUTTON_TEXT_PROCESSING)) currentStateGuess = 'processing';
+        else if (simplifyButton.textContent.includes(BUTTON_TEXT_SUCCESS)) currentStateGuess = 'success';
+        else if (simplifyButton.textContent.includes(BUTTON_TEXT_ERROR) || simplifyButton.textContent.includes(BUTTON_TEXT_API_ERROR)) currentStateGuess = 'error';
+        else if (simplifyButton.textContent.includes(BUTTON_TEXT_NO_REPLIES)) currentStateGuess = 'no_replies';
+        updateButtonState(currentStateGuess);
+    };
 
-        const computedStyle = window.getComputedStyle(simplifyButton);
-        const initialBg = computedStyle.backgroundColor;
-        if (initialBg && initialBg !== 'rgba(0, 0, 0, 0)' && initialBg !== 'transparent') {
-            simplifyButton.dataset.initialBgColor = initialBg;
-        } else {
-            simplifyButton.dataset.initialBgColor = '#007bff';
-        }
-
-        if (!simplifyButton.dataset.listenerAttached) {
-            simplifyButton.addEventListener('click', processLastTwoReplies);
-            simplifyButton.dataset.listenerAttached = 'true';
-            logInfo('按钮点击事件监听器已添加。');
-        }
-        updateButtonState('idle');
-
-
-        const moveAndStyleButton = (container) => {
-            if (!container || !simplifyButton) return;
-            if (simplifyButton.parentElement === container && simplifyButton.dataset.moved === 'true') {
-                logDebug("按钮已在目标容器中且已标记，无需操作。");
-                return;
-            }
-
-            const referenceButton = container.querySelector('button:not(#' + BUTTON_ID + ')');
-            if (referenceButton) {
-                logInfo("找到参考按钮，将尝试复制其 classes:", referenceButton.classList.toString());
-                simplifyButton.className = referenceButton.className;
-                simplifyButton.style.backgroundColor = '';
-            } else {
-                logError(`未能在目标容器 (${TARGET_CONTAINER_SELECTOR}) 中找到参考按钮。按钮将保留其默认或初始样式。`);
-            }
-
-            simplifyButton.dataset.moved = 'true';
-
-            try {
-                container.appendChild(simplifyButton);
-                logInfo(`简化按钮已移至目标容器 (${TARGET_CONTAINER_SELECTOR}) 并尝试应用样式。`);
-            } catch (e) {
-                logError("尝试将按钮移动到目标容器时出错:", e);
-                simplifyButton.dataset.moved = 'false';
-            }
-            let currentStateGuess = 'idle';
-            if (simplifyButton.textContent.includes(BUTTON_TEXT_PROCESSING)) currentStateGuess = 'processing';
-            else if (simplifyButton.textContent.includes(BUTTON_TEXT_SUCCESS)) currentStateGuess = 'success';
-            else if (simplifyButton.textContent.includes(BUTTON_TEXT_ERROR) || simplifyButton.textContent.includes(BUTTON_TEXT_API_ERROR)) currentStateGuess = 'error';
-            else if (simplifyButton.textContent.includes(BUTTON_TEXT_NO_REPLIES)) currentStateGuess = 'no_replies';
-            updateButtonState(currentStateGuess);
-        };
-
-        const observer = new MutationObserver((mutationsList, observerInstance) => {
-            const targetContainer = document.querySelector(TARGET_CONTAINER_SELECTOR);
-            if (targetContainer) {
-                logInfo('MutationObserver 找到目标容器:', targetContainer);
-                moveAndStyleButton(targetContainer);
-                observerInstance.disconnect();
-                logDebug('停止 MutationObserver (目标容器已找到)。');
-            }
+    // --- 使用 DOMWatcherService 监听目标容器 ---
+    if (window.DOMWatcherService && typeof window.DOMWatcherService.register === 'function') {
+        logInfo(`尝试通过 DOMWatcherService 注册监听目标容器: ${TARGET_CONTAINER_SELECTOR}`);
+        const registrationId = window.DOMWatcherService.register({
+            id: `simplify-script-target-watcher-${BUTTON_ID}`, // 唯一的注册ID
+            selector: TARGET_CONTAINER_SELECTOR,
+            callback: function(foundContainer, eventType) {
+                // eventType 在这里应为 'added' (因为 DOMWatcherService 的初始检查或后续添加)
+                logInfo(`DOMWatcherService 报告: 目标容器 '${TARGET_CONTAINER_SELECTOR}' 事件 '${eventType}'.`);
+                moveAndStyleButtonInternal(foundContainer);
+                // 由于 once: true, DOMWatcherService 会自动注销此监听器
+            },
+            eventTypes: ['added'],
+            once: true // 关键：找到容器并执行回调后，自动注销
         });
 
-        const initialTargetContainer = document.querySelector(TARGET_CONTAINER_SELECTOR);
-        if (initialTargetContainer) {
-            logInfo('目标容器已存在，直接尝试移动和样式化按钮。');
-            moveAndStyleButton(initialTargetContainer);
+        if (registrationId) {
+            logInfo(`已成功向 DOMWatcherService (ID: ${registrationId}) 注册监听。等待目标容器出现...`);
         } else {
-            logInfo('未立即找到目标容器，启动 MutationObserver 等待...');
-            observer.observe(document.body, { childList: true, subtree: true });
+            // 这通常意味着注册参数有问题，或者 DOMWatcherService 内部逻辑阻止了注册
+            logError(`向 DOMWatcherService 注册监听失败。按钮将保留在初始位置 (通常是 body)，并使用默认的 fixed 定位样式。`);
+            // 按钮将使用 #${BUTTON_ID} 定义的 fixed 样式（如果存在）
         }
+    } else {
+        logError('DOMWatcherService 未加载或不可用。按钮将保留在初始位置 (通常是 body)，并使用默认的 fixed 定位样式。');
+        // 按钮将使用 #${BUTTON_ID} 定义的 fixed 样式（如果存在）
+        // 此时，在 addGlobalStyle 中为 #${BUTTON_ID} 定义的 fixed 样式将生效。
+        // 你可以根据需要调整这些 fixed 样式，使其在无法移动时也能合理显示。
     }
+}
 
     if (document.readyState === 'loading') {
         window.addEventListener('DOMContentLoaded', setupUI);
