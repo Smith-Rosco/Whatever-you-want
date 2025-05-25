@@ -1,0 +1,794 @@
+thk,
+sts,
+mem {
+    display: none; /* Hide unused elements */
+}
+/* Main Container */
+main {
+    width: 100%;
+    max-width: 800px; /* Max width for content readability */
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* Space between text and options area */
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Text Area Styling */
+main > txt,
+main > opt {
+    background-color: #ffffff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 50, 100, 0.08);
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+main > txt:hover,
+main > opt:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 50, 100, 0.12);
+}
+
+h1 {
+    color: #007acc; /* A pleasant blue for headings */
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    border-bottom: 2px solid #e0e7ff;
+    padding-bottom: 10px;
+    animation: slideInFromLeft 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Apply animation delay for staggered effect */
+main > txt h1 { animation-delay: 0.2s; }
+main > opt h1 { animation-delay: 0.4s; }
+
+
+p {
+    margin-bottom: 1.2em;
+    color: #555;
+    animation: fadeInParagraph 0.5s ease-out forwards;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+/* Stagger paragraph animations */
+p:nth-of-type(1) { animation-delay: 0.5s; }
+p:nth-of-type(2) { animation-delay: 0.6s; }
+p:nth-of-type(3) { animation-delay: 0.8s; } /* Assuming this is the paragraph after fem */
+p:nth-of-type(4) { animation-delay: 1.1s; } /* Assuming this is the paragraph after psy */
+p:nth-of-type(5) { animation-delay: 1.3s; } /* The last paragraph */
+
+
+@keyframes fadeInParagraph {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
+/* Special Text Blocks: fem, psy, man, fxs */
+fem, psy, man {
+    display: block; /* Make them block elements */
+    margin: 1.5em 0;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    position: relative;
+    animation: fadeInBlock 0.7s ease-out forwards;
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+@keyframes fadeInBlock {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+fem {
+    background-color: #fff0f5; /* Lavender blush */
+    border-left: 5px solid #ff85a2; /* Soft pink */
+    color: #c72c48;
+    animation-delay: 0.7s; /* Stagger animation */
+}
+
+fem::before {
+    content: "💬"; /* "Lily:" */
+    font-weight: bold;
+    font-style: normal;
+    color: #c72c48;
+    margin-right: 5px;
+}
+
+psy {
+    background-color: #e6e6fa; /* Lavender */
+    border-left: 5px solid #9370db; /* Medium purple */
+    color: #5a3d8b;
+    animation-delay: 1s; /* Stagger animation */
+}
+
+psy::before {
+    content: "💭"; /* "Lily thinks:" */
+    font-weight: bold;
+    font-style: normal;
+    color: #5a3d8b;
+    margin-right: 5px;
+}
+
+/* Placeholder for male dialogue - not used in current HTML but good to have */
+man {
+    background-color: #e0f7fa; /* Light cyan */
+    border-left: 5px solid #00acc1; /* Cyan */
+    color: #005662;
+}
+man::before {
+    content: "💬"; /* "User:" */
+    font-weight: bold;
+    font-style: normal;
+    color: #005662;
+    margin-right: 5px;
+}
+
+
+fxs {
+    display: block;
+    margin: 2em 0;
+    padding: 20px;
+    border: 2px dashed #007acc;
+    border-radius: 8px;
+    text-align: center;
+    color: #007acc;
+    font-style: italic;
+    min-height: 60px; /* Give it some space */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: pulseBorder 2s infinite ease-in-out, fadeInBlock 0.7s ease-out forwards;
+    animation-delay: 1.2s; /* Stagger animation */
+    opacity: 0; /* Start hidden for fadeInBlock */
+}
+
+fxs::before {
+    content: "📹︎"; /* "Close-up shot" with emojis */
+    font-weight: bold;
+}
+
+@keyframes pulseBorder {
+    0% {
+        border-color: #007acc;
+        box-shadow: 0 0 5px rgba(0, 122, 204, 0.3);
+    }
+    50% {
+        border-color: #005c99;
+        box-shadow: 0 0 15px rgba(0, 92, 153, 0.5);
+    }
+    100% {
+        border-color: #007acc;
+        box-shadow: 0 0 5px rgba(0, 122, 204, 0.3);
+    }
+}
+
+/* Options Area Styling */
+/* Options list specific styling */
+.markdown-body opt div {
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.markdown-body opt ol {
+  list-style: decimal;
+  list-style-position: inside;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.markdown-body opt li {
+  background-color: #e9f5ff;
+  padding: 0.6rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #bde0fe;
+}
+
+.markdown-body opt li::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 128, 255, 0.05);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.markdown-body opt li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.markdown-body opt li:hover::before {
+  opacity: 1;
+}
+
+.markdown-body opt li:active {
+  transform: scale(0.98);
+}
+
+.markdown-body opt li span {
+  position: relative;
+  z-index: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+
+    main > txt,
+    main > opt {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.6em;
+    }
+
+    fem, psy, man {
+        padding: 12px 15px;
+    }
+    
+    main > opt li {
+        padding: 12px 15px;
+        padding-left: 45px; /* Adjust for smaller number */
+    }
+
+    main > opt li::before {
+        left: 10px;
+        width: 22px;
+        height: 22px;
+        font-size: 0.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    
+    main {
+        gap: 20px;
+    }
+
+    main > txt,
+    main > opt {
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    h1 {
+        font-size: 1.4em;
+        margin-bottom: 15px;
+        padding-bottom: 8px;
+    }
+
+    p {
+        font-size: 0.95em;
+    }
+
+    fem, psy, man {
+        font-size: 0.9em;
+    }
+
+    fxs {
+        padding: 15px;
+        font-size: 0.9em;
+    }
+
+    fxs::before {
+        font-size: 0.9em; /* Adjust emoji wrapper if needed */
+    }
+    
+    main > opt li {
+        font-size: 0.9em;
+        padding: 10px 12px;
+        padding-left: 40px;
+    }
+}
+
+/* ####################################### */
+/* 侧边栏样式 */
+/* ####################################### */
+
+/* 记忆区 */
+
+/* Global Resets and Base Styles */
+
+@keyframes fadeInContainer {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Heading Styles */
+#myInjectedMemoryTab_1A2B3C .ai-content-area h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    color: rgb(72, 160, 231);
+    position: relative;
+    padding-bottom: 15px;
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: fadeInDown 0.6s 0.5s ease-out forwards;
+}
+
+#myInjectedMemoryTab_1A2B3C .ai-content-area h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #007bff, #00b8d4);
+    border-radius: 2px;
+}
+
+#myInjectedMemoryTab_1A2B3C .ai-content-area h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #007bff;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e0e6ed;
+    position: relative;
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: fadeInLeft 0.6s 0.7s ease-out forwards;
+}
+
+#myInjectedMemoryTab_1A2B3C .ai-content-area h2:first-of-type {
+     margin-top: 0;
+}
+
+/* List Styles */
+#myInjectedMemoryTab_1A2B3C .ai-content-area ol {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#myInjectedMemoryTab_1A2B3C .ai-content-area li {
+    background-color: #ffffff;
+    padding: 18px 25px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border-left: 5px solid #007bff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease-in-out,
+                            box-shadow 0.3s ease-in-out,
+                            border-left-color 0.3s ease-in-out;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+}
+
+/* Staggered list item animation */
+#myInjectedMemoryTab_1A2B3C .ai-content-area div:nth-of-type(1) ol li:nth-child(1) { animation: popIn 0.5s 0.9s ease-out forwards; }
+#myInjectedMemoryTab_1A2B3C .ai-content-area div:nth-of-type(1) ol li:nth-child(2) { animation: popIn 0.5s 1.0s ease-out forwards; }
+#myInjectedMemoryTab_1A2B3C .ai-content-area div:nth-of-type(1) ol li:nth-child(3) { animation: popIn 0.5s 1.1s ease-out forwards; }
+/* ... add more if there are more items ... */
+
+#myInjectedMemoryTab_1A2B3C .ai-content-area div:nth-of-type(2) ol li:nth-child(1) { animation: popIn 0.5s 1.2s ease-out forwards; }
+/* ... add more if there are more items ... */
+
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.90) translateY(15px);
+    }
+    80% {
+        transform: scale(1.02) translateY(-2px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+#myInjectedMemoryTab_1A2B3C .ai-content-area li::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #e9f5ff, transparent 30%);
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 0;
+}
+
+#myInjectedMemoryTab_1A2B3C .ai-content-area li:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-left-color: #0056b3;
+}
+
+#myInjectedMemoryTab_1A2B3C .ai-content-area li:hover::before {
+    opacity: 0.6;
+    transform: translateX(0);
+}
+
+#myInjectedMemoryTab_1A2B3C .ai-content-area li > * {
+        position: relative;
+        z-index: 1;
+}
+
+#myInjectedMemoryTab_1A2B3C .ai-content-area li strong {
+    font-weight: 600;
+    color: #212529;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Generic animation keyframes */
+@keyframes fadeInDown {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #myInjectedMemoryTab_1A2B3C .ai-content-area {
+        margin: 20px auto;
+        padding: 20px 25px;
+    }
+
+    #myInjectedMemoryTab_1A2B3C .ai-content-area h1 {
+        font-size: 2.2rem;
+        margin-bottom: 25px;
+    }
+
+    #myInjectedMemoryTab_1A2B3C .ai-content-area h1::after {
+        width: 60px;
+        height: 3px;
+    }
+
+    #myInjectedMemoryTab_1A2B3C .ai-content-area h2 {
+        font-size: 1.5rem;
+        margin-top: 30px;
+        margin-bottom: 15px;
+    }
+
+    #myInjectedMemoryTab_1A2B3C .ai-content-area li {
+        padding: 15px 20px;
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    #myInjectedMemoryTab_1A2B3C .ai-content-area {
+        margin: 10px auto;
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    #myInjectedMemoryTab_1A2B3C .ai-content-area h1 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+    }
+
+    #myInjectedMemoryTab_1A2B3C .ai-content-area h2 {
+        font-size: 1.3rem;
+    }
+
+    #myInjectedMemoryTab_1A2B3C .ai-content-area li {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+
+    #myInjectedMemoryTab_1A2B3C .ai-content-area li strong {
+        font-size: 1rem;
+    }
+}
+
+/* ####################################### */
+/* 状态栏 */
+
+
+
+/* --- Custom Scrollbar --- */
+sti ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+sti ::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+sti ::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+sti ::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
+/* --- Main Content Area --- */
+.ai-content-area {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap to next line on smaller screens */
+  justify-content: center;
+  align-items: flex-start; /* Align items to the top */
+  max-width: 1200px; /* Max width for the content area */
+  margin: 0 auto; /* Center the content area */
+}
+
+/* --- STI (Status Item) Card Styling --- */
+.ai-content-area > sti {
+  flex: 1 1 400px; /* Grow, shrink, base width */
+  min-width: 320px; /* Minimum width before wrapping */
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  padding: 0px 30px;
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInCard 0.5s ease-out forwards;
+}
+
+/* Staggered animation for cards */
+.ai-content-area > sti:nth-child(1) { animation-delay: 0.1s; }
+.ai-content-area > sti:nth-child(2) { animation-delay: 0.2s; }
+/* Add more if there are more sti elements */
+
+@keyframes fadeInCard {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ai-content-area > sti:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+}
+
+/* --- Headings inside STI --- */
+.ai-content-area > sti > h1 {
+  font-size: 1.8rem;
+  color: #2c3e50; /* Dark blue-gray */
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e0e6ed; /* Light border */
+  position: relative;
+}
+
+.ai-content-area > sti > h1::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; /* Align with border-bottom */
+  left: 0;
+  width: 20%; /* Width of the accent line */
+  height: 2px;
+  background: linear-gradient(90deg, #64b5f6, #42a5f5); /* Blue gradient */
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.ai-content-area > sti:hover > h1::after {
+  width: 100%;
+}
+
+.ai-content-area > sti > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ai-content-area > sti > div > h2 {
+  font-size: 1.3rem;
+  color: #34495e; /* Slightly lighter blue-gray */
+  position: relative;
+  padding-left: 25px; /* Space for icon */
+}
+
+.ai-content-area > sti > div > h2::before {
+  content: ''; /* Default empty, specific icons below */
+  font-family: 'Arial', sans-serif; /* Fallback, better to use an icon font or SVG */
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  color: #64b5f6; /* Blue accent */
+  transition: transform 0.3s ease;
+}
+
+/* Specific icons for H2s using emoji (could be replaced with SVG/icon font for consistency) */
+.ai-content-area > sti > div > h2:nth-of-type(1)::before { content: '🌍'; } /* Scene Info */
+.ai-content-area > sti > div > h2:nth-of-type(2)::before { content: '😊'; } /* User Status */
+.ai-content-area > sti > div > h2:nth-of-type(3)::before { content: '📋'; } /* Current Task */
+.ai-content-area > sti > div > h2:nth-of-type(4)::before { content: 'ℹ️'; } /* Basic Status */
+.ai-content-area > sti > div > h2:nth-of-type(5)::before { content: '👗'; } /* Dress Details */
+.ai-content-area > sti > div > h2:nth-of-type(6)::before { content: '💖'; } /* Sex-related */
+
+.ai-content-area > sti > div > h2:hover::before {
+  transform: translateY(-50%) rotate(10deg) scale(1.1);
+}
+
+/* --- Lists --- */
+.ai-content-area > sti > div > ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.ai-content-area > sti > div > ul > li {
+  padding-left: 20px; /* Indent list items */
+  position: relative;
+  color: #555;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.ai-content-area > sti > div > ul > li::before {
+  content: '•'; /* Bullet point */
+  position: absolute;
+  left: 0;
+  color: #64b5f6; /* Blue accent for bullet */
+  font-size: 1.2em;
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.ai-content-area > sti > div > ul > li:hover {
+  color: #2c3e50;
+  transform: translateX(5px);
+}
+.ai-content-area > sti > div > ul > li:hover::before {
+  transform: scale(1.3);
+}
+
+.ai-content-area > sti > div > ul > li > strong {
+  color: #34495e;
+  font-weight: 600;
+}
+
+/* --- Paragraphs (for dress details etc.) --- */
+.ai-content-area > sti > div > p {
+  margin-bottom: 10px;
+  padding-left: 20px; /* Similar indent to list items */
+  color: #555;
+  line-height: 1.7;
+  transition: color 0.2s ease, transform 0.2s ease;
+  /* The   - is part of HTML, so we style around it */
+}
+
+.ai-content-area > sti > div > p:hover {
+  color: #2c3e50;
+  transform: translateX(3px);
+}
+
+.ai-content-area > sti > div > p > br {
+  display: block; /* Ensure <br> creates a new line */
+  content: "";
+  margin-top: 5px; /* Add a little space after a <br> */
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+  body {
+    padding: 15px;
+  }
+
+  .ai-content-area {
+    flex-direction: column; /* Stack sti elements vertically */
+    gap: 20px;
+  }
+
+  .ai-content-area > sti {
+    flex-basis: auto; /* Let them take full width available */
+    padding: 20px;
+  }
+
+  .ai-content-area > sti > h1 {
+    font-size: 1.6rem;
+  }
+
+  .ai-content-area > sti > div > h2 {
+    font-size: 1.2rem;
+    padding-left: 22px; /* Adjust for smaller icon or text */
+  }
+
+  .ai-content-area > sti > div > h2::before {
+    font-size: 1rem;
+  }
+
+  .ai-content-area > sti > div > ul > li,
+  .ai-content-area > sti > div > p {
+    padding-left: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 15px; /* Slightly smaller base font for very small screens */
+  }
+  body {
+    padding: 10px;
+  }
+  .ai-content-area > sti {
+    padding: 15px;
+    border-radius: 10px;
+  }
+
+  .ai-content-area > sti > h1 {
+    font-size: 1.4rem;
+  }
+
+  .ai-content-area > sti > div > h2 {
+    font-size: 1.1rem;
+  }
+}

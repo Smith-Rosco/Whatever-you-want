@@ -14,8 +14,8 @@ const loadStylesheet = (href) => {
 };
 
 
-loadStylesheet('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3.1/style.css');
+loadStylesheet('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3.1/style_v1.1.css');
 loadScript('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3.1/DOMWatcherService.js');
 loadScript('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3.1/input_v1.1.js');
 loadScript('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3.1/simplify_v1.1.js');
-loadScript('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3.1/sidebar.js');
+loadScript('https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3.1/sidebar_v1.1.js');

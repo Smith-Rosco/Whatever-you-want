@@ -125,7 +125,7 @@
                 top: 0;
                 right: calc(-1 * var(--inj-sidebar-width));
                 width: var(--inj-sidebar-width);
-                height: 100vh;
+                height: 90vh;
                 background-color: var(--inj-sidebar-bg);
                 box-shadow: -5px 0 15px var(--inj-shadow-color);
                 display: flex;
