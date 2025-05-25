@@ -14,6 +14,7 @@
     const LOCALSTORAGE_CONVERSATION_MAP_KEY = 'conversationIdInfo';
     const AI_REPLY_SELECTOR = 'div#ai-chat-answer'; // AI 回复的容器选择器 (最外层，例如每个消息卡片)
     const CONTENT_CONTAINER_SELECTOR = '.undefined.markdown-body'; // AI 回复内容实际所在的容器 (Markdown 渲染体)
+    const BUTTON_AREA_SELECTOR = 'div.flex.items-center.gap-2.pb-2'; // 按钮期望被移入的目标容器
 
     // 新的简化规则，针对 <main> 标签下的子元素
     // 最新回复: 保留 txt, sts, mem。移除 thk, opt。
@@ -545,12 +546,7 @@
         #${BUTTON_ID} {
             /* 初始可以设置为 fixed，如果希望在移动前它可见且位于固定位置 */
             position: fixed; 
-            bottom: 20px; /* 示例：移动前的默认位置 */
-            right: 20px;  /* 示例：移动前的默认位置 */
             z-index: 1000;/* 示例：确保在顶层 */
-            padding: 8px 12px; /* 示例：默认样式 */
-            border: none; /* 示例：默认样式 */
-            border-radius: 4px; /* 示例：默认样式 */
             cursor: pointer;
         }
         #${BUTTON_ID}[data-moved="true"] { 
@@ -558,8 +554,6 @@
             position: static; 
             right: auto; bottom: auto; z-index: auto;
             /* 清除或调整可能与容器内其他按钮冲突的固定样式 */
-            padding: unset; 
-            margin: unset; 
             /* 背景色等将由 updateButtonState 或复制的类名控制 */
         }
     `);
@@ -602,15 +596,13 @@
     }
     updateButtonState('idle'); // 初始化按钮状态和文本 (会应用背景色)
 
-    // --- 定义按钮移动和样式化的函数 (之前是 setupUI 内的局部函数) ---
+        // --- 定义按钮移动和样式化的函数 (之前是 setupUI 内的局部函数) ---
     const moveAndStyleButtonInternal = (container) => {
         if (!container || !simplifyButton) {
             logError("moveAndStyleButtonInternal: 容器或按钮无效。");
             return;
         }
 
-        // 即使 DOMWatcherService 的 once:true 保证回调一次，这个检查也无害，
-        // 并能处理其他可能的调用（尽管当前场景下不太可能）。
         if (simplifyButton.dataset.moved === 'true' && simplifyButton.parentElement === container) {
             logDebug("按钮已在目标容器中且已标记为移动，无需重复操作。");
             return;
@@ -618,50 +610,58 @@
 
         logInfo(`目标容器 (${TARGET_CONTAINER_SELECTOR}) 已找到，尝试移动和样式化按钮。容器:`, container);
 
-        const referenceButton = container.querySelector('button:not(#' + BUTTON_ID + ')');
-        if (referenceButton) {
-            logInfo("找到参考按钮，将复制其 classes:", referenceButton.classList.toString());
-            simplifyButton.className = referenceButton.className;
+        // 获取容器内所有已存在的按钮（排除我们自己的简化按钮）
+        const existingButtons = Array.from(container.querySelectorAll('button:not(#' + BUTTON_ID + ')'));
+
+        if (existingButtons.length > 0) {
+            // 使用第一个现有按钮作为样式参考
+            const styleReferenceButton = existingButtons[0];
+            logInfo("找到参考按钮（用于样式），将复制其 classes:", styleReferenceButton.className);
+            simplifyButton.className = styleReferenceButton.className; // 复制类名
+
             // 清除可能由 #BUTTON_ID 初始样式或 JavaScript 直接设置的样式，以便类名优先
-            simplifyButton.style.backgroundColor = '';
+            // (根据你的 addGlobalStyle，大部分是 position, bottom, right, z-index, padding 等)
             simplifyButton.style.position = '';
             simplifyButton.style.bottom = '';
             simplifyButton.style.right = '';
             simplifyButton.style.zIndex = '';
-            simplifyButton.style.padding = ''; // 等等，根据需要清除
-        } else {
-            logError(`未能在目标容器 (${TARGET_CONTAINER_SELECTOR}) 中找到参考按钮。按钮将依赖 #${BUTTON_ID}[data-moved="true"] 的样式。`);
-            // 如果没有参考按钮，按钮将依赖全局样式表中为 #${BUTTON_ID}[data-moved="true"] 定义的规则
-        }
-        
-        simplifyButton.dataset.moved = 'true'; // 标记为已移动
+            simplifyButton.style.padding = '';
+            simplifyButton.style.margin = ''; // 通常按钮组内的按钮会有 margin (gap-2 意味着有 margin)
+                                            // 如果复制的类名已经包含了正确的 margin，这行可以不要，
+                                            // 但为了保险，清除掉直接设置的 margin，让类名控制。
+            simplifyButton.style.backgroundColor = ''; // 背景色也由类名或 updateButtonState 控制
 
-        try {
+            // 获取最后一个现有按钮
+            const lastExistingButton = existingButtons[existingButtons.length - 1];
+            logInfo("将简化按钮插入到最后一个现有按钮之后:", lastExistingButton);
+
             // 从当前父节点（可能是 body）移除按钮
             if (simplifyButton.parentElement) {
                 simplifyButton.parentElement.removeChild(simplifyButton);
             }
-            container.appendChild(simplifyButton); // 将按钮添加到目标容器
-            logInfo(`简化按钮已成功移至目标容器。`);
-        } catch (e) {
-            logError("尝试将按钮移动到目标容器时出错:", e);
-            simplifyButton.dataset.moved = 'false'; // 移动失败，重置标记
-            // 尝试将其重新附加回body作为备用
-            if (!document.body.contains(simplifyButton)) {
-                 document.body.appendChild(simplifyButton);
-            }
-            // 此时按钮会使用 #${BUTTON_ID} 的初始 fixed 样式（如果定义了）
-        }
+            // 将简化按钮插入到最后一个现有按钮之后
+            lastExistingButton.insertAdjacentElement('afterend', simplifyButton);
+            logInfo(`简化按钮已成功移至最后一个现有按钮之后。`);
 
-        // 按钮移动后，其视觉状态（如背景色）可能需要根据当前状态重新应用，
-        // 因为类名更改或直接样式清除可能会影响它。
-        // updateButtonState 会处理这个问题。
-        let currentStateGuess = 'idle'; // 默认
+        } else {
+            logError(`未能在目标容器 (${TARGET_CONTAINER_SELECTOR}) 中找到其他按钮。简化按钮将附加到容器末尾。按钮将依赖 #${BUTTON_ID}[data-moved="true"] 的样式。`);
+            // 如果没有其他按钮，就直接附加到容器 (这种情况下，它会使用 #${BUTTON_ID}[data-moved="true"] 的样式)
+            if (simplifyButton.parentElement) {
+                simplifyButton.parentElement.removeChild(simplifyButton);
+            }
+            container.appendChild(simplifyButton);
+            logInfo(`简化按钮已成功附加到目标容器末尾。`);
+        }
+        
+        simplifyButton.dataset.moved = 'true'; // 标记为已移动
+
+        // 按钮移动后，其视觉状态（如背景色）可能需要根据当前状态重新应用
+        let currentStateGuess = 'idle';
         if (simplifyButton.textContent.includes(BUTTON_TEXT_PROCESSING)) currentStateGuess = 'processing';
         else if (simplifyButton.textContent.includes(BUTTON_TEXT_SUCCESS)) currentStateGuess = 'success';
         else if (simplifyButton.textContent.includes(BUTTON_TEXT_ERROR) || simplifyButton.textContent.includes(BUTTON_TEXT_API_ERROR)) currentStateGuess = 'error';
         else if (simplifyButton.textContent.includes(BUTTON_TEXT_NO_REPLIES)) currentStateGuess = 'no_replies';
-        updateButtonState(currentStateGuess);
+        updateButtonState(currentStateGuess); // 会重新应用正确的背景色等
     };
 
     // --- 使用 DOMWatcherService 监听目标容器 ---
