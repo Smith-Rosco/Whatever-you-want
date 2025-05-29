@@ -111,19 +111,13 @@
             };
             console.log('【输入控制脚本】增强切换按钮已创建并绑定事件。');
         }
-
-        // 插入按钮
-        const sendButtonElement = controlsAreaElement.querySelector(NATIVE_SEND_BUTTON_SELECTOR);
-        // 确保按钮只添加一次，或者如果它们已经存在于DOM中（但不在正确位置），则移动它们
-        if (sendButtonElement) {
-            // 插入按钮
-            if (modeToggleButton.parentElement !== controlsAreaElement) {
-                controlsAreaElement.appendChild(modeToggleButton);
-            }
-            if (enhancementToggleButton.parentElement !== controlsAreaElement) {
-                controlsAreaElement.appendChild(enhancementToggleButton);
-            }
-            console.log('【输入控制脚本】自定义按钮已插入到聊天界面。');        }
+        if (modeToggleButton.parentElement !== controlsAreaElement) {
+            controlsAreaElement.appendChild(modeToggleButton);
+        }
+        if (enhancementToggleButton.parentElement !== controlsAreaElement) {
+            controlsAreaElement.appendChild(enhancementToggleButton);
+        }
+        console.log('【输入控制脚本】自定义按钮已插入到聊天界面。');
     }
 
     // 定义选项点击监听器

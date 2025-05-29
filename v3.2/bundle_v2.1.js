@@ -67,7 +67,7 @@
     const resources = [
         { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3.2/style.css', type: 'style' },
         { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3.2/DOMWatcherService.js', type: 'script', check: () => !!window.DOMWatcherService },
-        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3.2/input.js', type: 'script' },
+        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3.2/input_v1,1.js', type: 'script' },
         { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3.2/simplify.js', type: 'script' },
         { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v3.2/sidebar.js', type: 'script' },
     ];
