@@ -98,7 +98,7 @@
         { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4/DOMWatcherService.js', type: 'script', check: () => !!window.DOMWatcherService },
         { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4/inputArea.js', type: 'script' },
         { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4/simplify.js', type: 'script' },
-        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4/sidebar.js', type: 'script' },
+        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4/sideBar.js', type: 'script' },
     ];
 
     // 自动执行
