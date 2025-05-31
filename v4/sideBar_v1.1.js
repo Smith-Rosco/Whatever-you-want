@@ -52,7 +52,7 @@
             top: 0;
             right: 0;
             width: 50px;
-            height: 100%;
+            height: 80%;
             z-index: 1000;
         }
 
