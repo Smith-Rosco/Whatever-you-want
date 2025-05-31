@@ -16,7 +16,6 @@
 
     // --- 配置区 ---
     const NATIVE_TEXTAREA_SELECTOR = '#ai-chat-input';
-    const NATIVE_SEND_BUTTON_SELECTOR = '#ai-send-button'; // 用于检测聊天界面，以及按钮插入位置参考
     const NATIVE_CONTROLS_AREA_SELECTOR = '.flex.items-center.gap-2.pb-2'; // 自定义按钮的父容器
     const CUSTOM_MODE_TOGGLE_ID = 'custom-mode-toggle-scripted';
     const CUSTOM_ENHANCEMENT_TOGGLE_ID = 'custom-enhancement-toggle-scripted';
