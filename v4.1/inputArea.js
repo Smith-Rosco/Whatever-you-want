@@ -286,7 +286,7 @@
             /* 展开时可以加一点上边距 */
             transform: translateY(0);
             /* 展开时回到正常位置 */
-            margin-top: 1em;
+            margin-top: 0.5em;
         }
 
         /* 移除了 input-area > * 的 opacity 控制，改为控制 input-area 本身的 opacity */
@@ -298,7 +298,7 @@
             border-radius: 0.8em;
             border: 0.0625em solid var(--ai-input-border);
             flex: 1;
-            line-height: 1;
+            line-height: 1.2;
             font-size: 1rem;
             resize: none;
             transition: var(--ai-input-transition);
@@ -348,11 +348,9 @@
         .notification {
             position: fixed;
             /* 相对于视口定位 */
-            left: 50%;
-            /* 水平居中 */
-            bottom: 2em;
+            bottom: 8em;
             /* 距离底部的位置 */
-            transform: translateX(-50%) translateY(100%);
+            transform: translateX(50%) translateY(100%);
             /* 初始在屏幕外下方，并水平居中 */
             background: var(--ai-input-success);
             color: white;
@@ -370,7 +368,7 @@
         }
 
         .notification.show {
-            transform: translateX(-50%) translateY(0);
+            transform: translateX(50%) translateY(0);
             /* 移动到预定位置 */
             opacity: 1;
         }
@@ -1190,6 +1188,11 @@
                 elements.sendBtn.addEventListener('click', this.handleSendClick.bind(this));
             } else { Logger.warn(MODULE_NAME, `sendBtn (${Config.SEND_BTN_ID}) 或 messageInput (${Config.MESSAGE_INPUT_ID}) 未找到，发送功能受限。`); }
 
+            // 输入框键盘事件
+            if (elements.messageInput) {
+                elements.messageInput.addEventListener('keydown', this.handleKeyDown.bind(this));
+            } else { Logger.warn(MODULE_NAME, `messageInput (${Config.MESSAGE_INPUT_ID}) 未找到，键盘事件监听未绑定。`); }
+
             Logger.log(MODULE_NAME, '自定义控件事件监听器初始化完成。');
         },
 
@@ -1391,6 +1394,21 @@
             } else {
                 UIManager.showNotification('请输入消息内容！', 'error');
                 if (document.body.contains(messageInput)) messageInput.focus();
+            }
+        },
+
+        handleKeyDown: function (event) {
+            // Enter (发送)
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                this.handleSendClick();
+                return;
+            }
+
+            // Shift+Enter (换行)
+            if (event.key === 'Enter' && event.shiftKey) {
+                // 允许换行，自动调整高度
+                setTimeout(() => UIManager.autoResizeTextarea(), 0);
             }
         }
     };
