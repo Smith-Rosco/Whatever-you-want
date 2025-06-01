@@ -1089,24 +1089,43 @@
         updateModeButtonDisplay: function () {
             const MODULE_NAME = 'UIManager.updateModeButtonDisplay';
             const { toggleBtn, toggleState } = this.elements;
+
             if (!toggleBtn || !toggleState) {
                 Logger.warn(MODULE_NAME, '模式切换按钮或状态显示元素未找到。');
                 return;
             }
+
             const icon = toggleBtn.querySelector('i');
             if (!icon) {
                 Logger.warn(MODULE_NAME, '模式切换按钮图标未找到。');
                 return;
             }
 
+            // ✅ 图标立即切换，动画同步开始
             if (State.currentMode === '角色扮演模式') {
-                icon.className = 'fas fa-feather-alt'; // Or theater-masks, adjust based on initial
+                icon.className = 'fas fa-feather-alt';
             } else if (State.currentMode === '小说模式') {
-                icon.className = 'fas fa-theater-masks'; // Or feather-alt
+                icon.className = 'fas fa-theater-masks';
             }
+
+            // 设置状态文字（同步）
             toggleState.textContent = State.currentMode;
             Logger.log(MODULE_NAME, `模式按钮显示已更新为: ${State.currentMode}`);
+
+            // 🌟 开启动画（图标已换完）
+            if (typeof toggleBtn.animate === 'function') {
+                toggleBtn.animate([
+                    { opacity: 1, transform: 'scale(1) rotate(0deg)', filter: 'brightness(1)' },
+                    { opacity: 0.2, transform: 'scale(0.85) rotate(-15deg)', filter: 'brightness(0.8)' },
+                    { opacity: 1, transform: 'scale(1.1) rotate(10deg)', filter: 'brightness(1.2)' },
+                    { opacity: 1, transform: 'scale(1) rotate(0deg)', filter: 'brightness(1)' }
+                ], {
+                    duration: 500,
+                    easing: 'ease-in-out'
+                });
+            }
         }
+
     };
 
     // =========================================================================
@@ -1518,6 +1537,7 @@
                 const inputEvent = new Event('input', { bubbles: true, cancelable: true });
                 messageInput.dispatchEvent(inputEvent);
                 Logger.log(MODULE_NAME, `已填充输入框并派发 'input' 事件: "${optionText}"`);
+                UIManager.expandInputArea(); // Ensure input area is expanded
 
                 // Optionally focus, though user click might handle this
                 // messageInput.focus();

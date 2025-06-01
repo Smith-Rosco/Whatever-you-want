@@ -50,10 +50,10 @@
     /* 热区样式 */
         .hot-zone {
             position: fixed;
-            top: 20%;
+            top: 40%;
             right: 0;
-            width: 15%;
-            height: 60%;
+            width: 10%;
+            height: 20%;
             z-index: 1000;
         }
 
