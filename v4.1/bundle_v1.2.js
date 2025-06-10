@@ -85,7 +85,7 @@
 
     // 默认资源配置
     const resources = [
-        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4.1/style.css', type: 'style' },
+        { src: 'http://localhost:8000/style_v1.css', type: 'style' },
         { // 新增 Font Awesome 样式表
             src: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css',
             type: 'style',
@@ -95,10 +95,10 @@
                 referrerpolicy: "no-referrer" // 注意这里是 referrerpolicy
             }
         },
-        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4.1/DOMWatcherService.js', type: 'script', check: () => !!window.DOMWatcherService },
-        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4.1/inputArea_v1.js', type: 'script' },
-        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4.1/simplify.js', type: 'script' },
-        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4.1/sideBar_v1.1.js', type: 'script' },
+        { src: 'http://localhost:8000/DOMWatcherService.js', type: 'script', check: () => !!window.DOMWatcherService },
+        { src: 'http://localhost:8000/inputArea_v1.js', type: 'script' },
+        { src: 'http://localhost:8000/simplify.js', type: 'script' },
+        { src: 'http://localhost:8000/sideBar_v1.1.js', type: 'script' },
     ];
 
     // 自动执行
