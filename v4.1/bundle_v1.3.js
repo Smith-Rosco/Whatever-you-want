@@ -85,7 +85,7 @@
 
     // 默认资源配置
     const resources = [
-        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4/style_v1.css', type: 'style' },
+        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4.1/style_v1.css', type: 'style' },
         { // 新增 Font Awesome 样式表
             src: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css',
             type: 'style',
@@ -95,10 +95,10 @@
                 referrerpolicy: "no-referrer" // 注意这里是 referrerpolicy
             }
         },
-        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4/DOMWatcherService.js', type: 'script', check: () => !!window.DOMWatcherService },
-        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4/inputArea_v1.js', type: 'script' },
-        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4/simplify.js', type: 'script' },
-        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4/sideBar_v1.1.js', type: 'script' },
+        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4.1/DOMWatcherService.js', type: 'script', check: () => !!window.DOMWatcherService },
+        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4.1/inputArea_v1.js', type: 'script' },
+        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4.1/simplify.js', type: 'script' },
+        { src: 'https://cdn.jsdelivr.net/gh/Smith-Rosco/Whatever-you-want/v4.1/sideBar_v1.1.js', type: 'script' },
     ];
 
     // 自动执行
