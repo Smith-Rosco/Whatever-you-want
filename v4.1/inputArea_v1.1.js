@@ -1349,6 +1349,7 @@
         },
 
         handleActionClick: function () {
+            window.simplifyAIReplies();
             const MODULE_NAME = 'CustomControls.handleActionClick';
             const { actionBtn } = UIManager.elements;
             if (!actionBtn) return;
