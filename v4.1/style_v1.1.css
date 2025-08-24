@@ -335,3 +335,6 @@ fxs::before {
         padding-left: 40px;
     }
 }
+.mode-area {
+    display: none;
+}
